@@ -1,0 +1,56 @@
+﻿@model NLayerArchTemplate.Dtos.Login.LoginDto
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Template | Giriş</title>
+    <partial name="_CssReferences" />
+</head>
+<body class="hold-transition login-page">
+    <div class="login-box">
+        <!-- /.login-logo -->
+        <div class="card card-outline card-primary">
+            <div class="card-header text-center">
+                <div class="h2">Kullanıcı Girişi</div>
+            </div>
+            <div class="card-body">
+                @Html.AntiForgeryToken()
+                <form>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-user"></span>
+                            </div>
+                        </div>
+                        <input class="form-control" placeholder="Kullanıcı Adı" asp-for="Username" pattern="[^'\x22]+"/>
+                    </div>
+                    <div class="input-group mb-3">
+                        <div class="input-group-append">
+                            <div class="input-group-text">
+                                <span class="fas fa-lock"></span>
+                            </div>
+                        </div>
+                        <input type="password" class="form-control" placeholder="Şifre" asp-for="Password" pattern="[^'\x22]+" />
+                    </div>
+                    <div class="row">
+                        <!-- /.col -->
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block button" id="btnLogin">Giriş Yap</button>
+                        </div>
+                        <!-- /.col -->
+                    </div>
+                </form>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+    <!-- /.login-box -->
+    <partial name="_JsReferences" />
+    <script asp-append-version="true" src="~/pages/login.js"></script>
+    </body>
+</html>

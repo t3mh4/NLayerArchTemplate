@@ -1,0 +1,115 @@
+﻿@model NLayerArchTemplate.Core.Models.ErrorModel
+@using NLayerArchTemplate.Core;
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Template | Hata</title>
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link href="~/plugins/fontawesome-free/css/all.min.css" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="~/adminlte-3.2.0/dist/css/adminlte.min.css" rel="stylesheet" />
+    <style>
+        .error-template {
+            padding: 40px 15px;
+            text-align: center;
+        }
+
+        .error-actions {
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .error-actions .btn {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body class="hold-transition sidebar-collapse">
+    <div class="wrapper">
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <div class="container-fluid">
+                    <div class="row mb-2">
+                        <div class="col-sm-6">
+                            <h1></h1>
+                        </div>
+                        <div class="col-sm-6">
+                        </div>
+                    </div>
+                </div><!-- /.container-fluid -->
+            </section>
+            <!-- Main content -->
+            <section class="content">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="error-template">
+                            <h1>
+                                Oops!
+                            </h1>
+                            @{
+                                var statusCode = Context.Response.StatusCode;
+                            }
+                            @if (Context.Response.StatusCode == (int)System.Net.HttpStatusCode.NotFound)
+                            {
+                                <h2>
+                                    @Context.Response.StatusCode Sayfa Bulunamadı
+                                </h2>
+                            }
+                            else
+                            {
+                                <h2>
+                                    @Context.Response.StatusCode @DefaultStatusCodeDisplayNames.GetReasonPhrase(Context.Response.StatusCode)
+                                </h2>
+                            }
+
+                            <div class="error-details">
+                                @if (Context.Response.StatusCode == (int)System.Net.HttpStatusCode.NotFound)
+                                {
+                                    <span>
+                                        Gitmek istediğiniz sayfa bulunamadı.
+                                    </span>
+                                }
+                                <div style="display:block" id="errorMessage">
+                                    @Model.Message
+                                </div>
+                                <div style="display:none" id="stackTrace">
+                                    @Model.StackTrace
+                                </div>
+                            </div>
+                            <div class="error-actions">
+                                <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">
+                                    <span class="glyphicon glyphicon-home"></span>
+                                    Anasayfa
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.error-page -->
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <footer class="main-footer">
+            <strong>Copyright &copy; 2023</strong>
+        </footer>
+    </div>
+    <!-- jQuery -->
+    <script src="~/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="~/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE-3.2.0 App -->
+    <script src="~/adminlte-3.2.0/dist/js/adminlte.min.js"></script>
+</body>
+</html>
+

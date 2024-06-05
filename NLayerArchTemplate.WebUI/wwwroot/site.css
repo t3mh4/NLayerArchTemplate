@@ -1,0 +1,9 @@
+﻿.checkbox-readonly {
+    cursor: not-allowed;
+    display: inline-block;
+    pointer-events: none;
+}
+
+.logo-css {
+    opacity: .8
+}

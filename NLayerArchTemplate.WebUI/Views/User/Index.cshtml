@@ -1,0 +1,24 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title"><i class="fa fa-users"></i>&nbsp; @ViewBag.PageHeader</h3>
+        <div class="card-tools">
+            <div class="input-group input-group">
+                <button type="button" class="btn btn-outline-light" id="btnAdd" title="Ekle"><i class="fa fa-plus"></i></button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-outline-light" id="btnEdit" title="Düzenle"><i class="fa fa-edit"></i></button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-outline-light" id="btnDelete" title="Sil"><i class="fa fa-trash-alt"></i></button>
+            </div>
+        </div>
+    </div>
+    @Html.AntiForgeryToken()
+    <div class="card-body">
+        <partial name="_CssDatatableReferences" />
+        <table id="tblKullanici" class="table table-striped display nowrap" style="width:100%"></table>
+        <partial name="_JsDatatableReferences" />
+    </div>
+</div>
+
+<script asp-append-version="true" src="~/pages/user_index.js"></script>

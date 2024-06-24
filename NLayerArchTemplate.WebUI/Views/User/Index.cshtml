@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@* @model NLayerArchTemplate.Dtos.User.UserCoreDto *@
 
 <div class="card card-primary">
     <div class="card-header">
@@ -14,6 +15,7 @@
         </div>
     </div>
     @Html.AntiForgeryToken()
+
     <div class="card-body">
         <partial name="_CssDatatableReferences" />
         <table id="tblKullanici" class="table table-striped display nowrap" style="width:100%"></table>

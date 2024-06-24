@@ -106,7 +106,7 @@ class axios_request {
     #handleError(err) {
         //err.response.data = HttpResponse -> Data,Message,IsSuccess,ReturnUrl
         if (err.response) {
-            if (err.response.data.Data)//Galobal Error'den gelen hataları gösteriyoruz
+            if (err.response.data.Data)//ErrorController.Handle'dan gelen hataları gösteriyoruz
                 this.#showError(err.response.data);
             else {//Manuel hataları gösteriyoruz
                 let msg = new message();
@@ -160,6 +160,7 @@ class axios_request {
 class form {
     static toObject(form) {
         let formData = new FormData(form);
+        console.log(formData);
         return Object.fromEntries(formData);
     }
 }

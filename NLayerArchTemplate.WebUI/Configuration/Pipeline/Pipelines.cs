@@ -27,9 +27,6 @@ public static class Pipeline
 {
     public static void CreatePipeline(this IApplicationBuilder app)
     {
-        //oluşan hataları yakalayıp ErrorController'a yönlendiriyor.
-        app.UseExceptionHandler("/Error/Handle");
-        app.UseStatusCodePagesWithReExecute("/Error/Index", "?code={0}");
         app.UseMiddleware<SecurityHeadersMiddleware>();
         //----------------
         //For activating Strict-Transport-Security - web security policy mechanism that helps to
@@ -45,8 +42,8 @@ public static class Pipeline
         app.UseRequestLocalization(new RequestLocalizationOptions
         {
             DefaultRequestCulture = new RequestCulture("tr-TR"),
-            SupportedCultures = new[] { new CultureInfo("tr-TR") },
-            SupportedUICultures = new[] { new CultureInfo("tr-TR") }
+            SupportedCultures = [new CultureInfo("tr-TR")],
+            SupportedUICultures = [new CultureInfo("tr-TR")]
         });
         //-------------------
         //app.UseCors();
@@ -56,7 +53,6 @@ public static class Pipeline
         //app.UseSession();
         //app.UseResponseCompression();iptal ettim çünkü güvenlik zafiyeti oluşturabilirmiş.
         //app.UseResponseCaching();
-        //app.UseMiddleware<ErrorHandlerMiddleware>();//.Net Core API projelerinde global error handler middleware kullanmak daha doğru olur.
         app.UseHealthChecks("/health");
         app.UseEndpoints(endpoints =>
         {

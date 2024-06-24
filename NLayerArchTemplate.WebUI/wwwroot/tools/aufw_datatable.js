@@ -202,7 +202,7 @@ class aufw_datatable {
         }
         $.extend(true, defOptions, options);
         let mdl = new aufw_modal();
-        mdl.show({
+        await mdl.show({
             title: defOptions.title,
             axiosRequest: defOptions.partial
         });
@@ -226,7 +226,7 @@ class aufw_datatable {
         }
         $.extend(true, defOptions, options);
         let mdl = new aufw_modal();
-        mdl.show({
+        await mdl.show({
             title: defOptions.title,
             axiosRequest: defOptions.partial
         });

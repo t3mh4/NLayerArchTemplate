@@ -16,6 +16,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<TblUser>
         builder.Property(x => x.Password).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Name).IsRequired().HasMaxLength(75);
         builder.Property(x => x.Surname).IsRequired().HasMaxLength(75);
+        builder.Property(x => x.Email).HasMaxLength(250);
         builder.Property(x => x.IsActive);
         //Global Query Filter
         builder.HasQueryFilter(x => !x.IsDeleted);
@@ -24,12 +25,13 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<TblUser>
         {
             Id = 1,
             Username = "admin",
-            Password = PasswordHelper.HashPassword("t3mh4."),
+            Password = PasswordHelper.HashPassword("1234"),
             Name = "Admin",
             Surname = "",
-            CreatedBy = "Admin",
-            CreatedDate = DateTime.UtcNow,
+            //CreatedBy = "Admin",
+            //CreatedDate = DateTime.Now,
             IsActive = true,
+            Email = ""
         });
     }
 }

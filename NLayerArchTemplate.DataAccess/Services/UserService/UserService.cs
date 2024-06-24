@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.DataAccess.Repositories;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
@@ -22,9 +23,10 @@ public class UserService : Repository<TblUser>, IUserService
                  Username = s.Username,
                  Name = s.Name,
                  Surname = s.Surname,
+                 Email = s.Email,
                  IsActive = s.IsActive,
              });
-        return await query.FirstOrDefaultAsync(ct) ?? throw new Exception("Kullanıcı Bulunamadı..!!");
+        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false) ?? throw new Exception(UserServiceMessages.KullaniciBulunamadi);
     }
 
     public async Task<UserAuthorizationDto> GetByUsername(string username, CancellationToken ct)
@@ -37,10 +39,11 @@ public class UserService : Repository<TblUser>, IUserService
                   Password = s.Password,
                   Name = s.Name,
                   Surname = s.Surname,
+                  Email=s.Email,
                   IsActive = s.IsActive,
                   IsDeleted = s.IsDeleted
               });
-        return await query.FirstOrDefaultAsync(ct);
+        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false) ?? throw new Exception(UserServiceMessages.KullaniciBulunamadi);
     }
 
     public async Task<List<UserListItemDto>> GetUserList(CancellationToken ct)
@@ -52,12 +55,9 @@ public class UserService : Repository<TblUser>, IUserService
                   Username = s.Username,
                   Name = s.Name,
                   Surname = s.Surname,
-                  IsActive = s.IsActive,
-                  CreatedBy = s.CreatedBy,
-                  CreatedDate = s.CreatedDate,
-                  ModifiedBy = s.ModifiedBy,
-                  ModifiedDate = s.ModifiedDate,
+                  Email = s.Email,
+                  IsActive = s.IsActive
               });
-        return await query.ToListAsync(ct);
+        return await query.ToListAsync(ct).ConfigureAwait(false);
     }
 }

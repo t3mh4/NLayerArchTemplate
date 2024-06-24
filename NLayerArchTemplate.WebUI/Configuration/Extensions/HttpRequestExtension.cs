@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Primitives;
-using NLayerArchTemplate.Core.Extensions;
-using System.IO;
+﻿using NLayerArchTemplate.Core.Extensions;
 
 namespace NLayerArchTemplate.WebUI.Configuration.Extensions;
 

@@ -1,75 +1,36 @@
 ﻿using Serilog;
-using Serilog.Events;
-using Serilog.Filters;
-using Serilog.Sinks.MSSqlServer;
-using System.Collections.ObjectModel;
-using System.Data;
+using Serilog.Settings.Configuration;
+using MySql.Data.MySqlClient;
 
 namespace NLayerArchTemplate.WebUI.Helpers;
 
 public class SeriLogHelper
 {
-    public static void Initialize(string connectionString)
+    public static void Initialize(IConfiguration configuration, string connectionString)
     {
-        //todo:aşağıdaki filtre kaldırıldığında beklenmedik hatalar için
-        //aynı hataı 2 kez. yazmakata.Filtre aktif edildiğinde de bu sefer custom loglar görünmemekte.
-        //düzeltilesi gerekiyor!!(CustomLogLevel yapılabilir.)
-        var columnOptions = new ColumnOptions
-        {
-            AdditionalColumns = new Collection<SqlColumn>() { UserFullNameColumn,RequestType, RequestPath },
-        };
-        columnOptions.Store.Remove(StandardColumn.MessageTemplate);
-        columnOptions.Store.Remove(StandardColumn.Properties);
+        var sectionName = "SerilogFile";
+        if (IsDatabaseAvaliable(connectionString))
+            sectionName = "SeriLogDb";
         Log.Logger = new LoggerConfiguration()
-            .WriteTo.MSSqlServer(connectionString,
-                                 sinkOptions: MsSqlServerSinkOptions,
-                                 sinkOptionsSection: null,
-                                 appConfiguration: null,
-                                 restrictedToMinimumLevel: LogEventLevel.Error,
-                                 formatProvider: null,
-                                 columnOptions: columnOptions,
-                                 columnOptionsSection: null,
-                                 logEventFormatter: null)
-            .Enrich.FromLogContext()
-            //.Filter.ByExcluding(Matching.WithProperty("SourceContext"))
-            .CreateBootstrapLogger();
+               .ReadFrom.Configuration(configuration, new ConfigurationReaderOptions { SectionName = sectionName })
+               .Enrich.FromLogContext()
+               .CreateLogger();
     }
 
-    private static SqlColumn UserFullNameColumn
+    private static bool IsDatabaseAvaliable(string connectionString)
     {
-        get
+        try
         {
-            var col = new SqlColumn("UserFullName", SqlDbType.NVarChar, true, 150);
-            col.PropertyName = "UserFullName";
-            return col;
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                connection.Open();
+                return true;
+            }
         }
-    }
-
-    private static SqlColumn RequestPath
-    {
-        get
+        catch (MySqlException ex)
         {
-            var col = new SqlColumn("RequestPath", SqlDbType.NVarChar, true, 500);
-            col.PropertyName = "RequestPath";
-            return col;
-        }
-    }
-
-    private static SqlColumn RequestType
-    {
-        get
-        {
-            var col = new SqlColumn("RequestType", SqlDbType.NVarChar, true, 10);
-            col.PropertyName = "RequestType";
-            return col;
-        }
-    }
-
-    private static MSSqlServerSinkOptions MsSqlServerSinkOptions
-    {
-        get
-        {
-            return new MSSqlServerSinkOptions { TableName = "Log", AutoCreateSqlTable = true };
+            return false;
         }
     }
 }
+   

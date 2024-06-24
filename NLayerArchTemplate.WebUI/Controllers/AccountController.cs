@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.Dtos.Login;
@@ -34,23 +35,24 @@ public class AccountController : BaseController
         var user = await userManager.CheckAuthorization(request.Data, cancellationToken);
         if (user == null)
         {
-            return new JsonActionResult(HttpResponseModel.Fail("Kullanıcı adı veya şifre hatalı"), HttpStatusCode.InternalServerError.ToInt32());
+            return new JsonActionResult(HttpResponseModel.Fail(AccountMessages.CheckAuthorizationFail), HttpStatusCode.InternalServerError.ToInt32());
         }
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier,request.Data.Username),
-            new Claim(KeyValues.ClaimTypeUserFullName,$"{user.Name} {user.Surname}"),
+            new(ClaimTypes.NameIdentifier,request.Data.Username),
+            new(KeyValues.ClaimTypeUserFullName,$"{user.Name} {user.Surname}"),
+            new(KeyValues.ClaimTypeEmail,user.Email),
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
-        return new JsonActionResult(HttpResponseModel.Success($"Hoş geldiniz {user.Name} {user.Surname}.<br/>Anasayfaya yönlendiriliyorsunuz."));
+        return new JsonActionResult(HttpResponseModel.Success(AccountMessages.LoginSuccess(user.UserFullName)));
     }
 
     [HttpPost]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return new JsonActionResult(HttpResponseModel.Success("Giriş Sayfasına Yönlendiriliyorsunuz..!!", "/Account/Login"));
+        return new JsonActionResult(HttpResponseModel.Success(AccountMessages.Logout, "/Account/Login"));
     }
 
     //[HttpPost]

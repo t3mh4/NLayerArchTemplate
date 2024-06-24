@@ -1,20 +1,21 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using NLayerArchTemplate.Business.UserManager;
 using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.Settings;
 using NLayerArchTemplate.WebUI.Configuration.BuilderServices;
 using NtierArchTemplate.Business;
-using NtierArchTemplate.Business.UserManager;
 
 namespace NLayerArchTemplate.WebUI.BuilderServices;
 
 public static class BuilderService
 {
-    public static void Create(this IServiceCollection services, IConfiguration configuration)
+    public static void Create(this IServiceCollection services,
+                              IConfiguration configuration,
+                              bool isDevelopment,
+                              string connectionString)
     {
-
         var jsonSettings = new CustomJsonSerializerSettings();
+
         // Add services to the container.
         services.AddControllersWithViews(options =>
         {
@@ -30,8 +31,9 @@ public static class BuilderService
             options.SerializerSettings.Formatting = jsonSettings.Formatting;
         }).AddRazorRuntimeCompilation();//cshtml files will be compiled on runtime
 
+
         //Business katmanında kullanılacak DI'lar içn eklendi.
-        services.AddBusinessServices(configuration);
+        services.AddBusinessServices(isDevelopment, connectionString);
 
         //builder.Services.AddResponseCompressionService(); iptal ettim çünkü güvenlik zafiyeti oluşturabilirmiş.
 
@@ -46,7 +48,6 @@ public static class BuilderService
                 options.ExpireTimeSpan = TimeSpan.FromMinutes(KeyValues.CookieTimeOut);
             });
 
-        services.AddTransient<IUserManager, UserManager>();
         services.AddHealthChecks();
         //Antiforgery token yeniden düzenlendi.
         services.AddAntiforgery(options =>

@@ -1,29 +1,34 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NLayerArchTemplate.DataAccess;
 using NLayerArchTemplate.DataAccess.Repositories;
 using NLayerArchTemplate.DataAccess.Repositories.Interfaces;
+using NLayerArchTemplate.DataAccess.Services.UserService;
+using NtierArchTemplate.Business.UserManager;
+using NtierArchTemplate.DataAccess.Services.UserService;
 
 namespace NtierArchTemplate.Business;
 
 public static class DependencyResolver
 {
-    public static IServiceCollection AddBusinessServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddBusinessServices(this IServiceCollection services, bool isDevelopment,
+                              string connectionString)
     {
         services.AddHttpContextAccessor();
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
-            if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Development")
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            if (isDevelopment)
             {
                 options.EnableDetailedErrors();
                 options.EnableSensitiveDataLogging();
                 options.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name });
             }
         });
-        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddTransient<IUserManager, UserManager.UserManager>();
+        services.AddTransient<IUserService, UserService>();
+        services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddValidatorsFromAssembly(typeof(DependencyResolver).Assembly); // register validators
         services.AddAutoMapper(typeof(DependencyResolver).Assembly); // register automapper
         return services;

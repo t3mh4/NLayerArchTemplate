@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json;
 
 namespace NLayerArchTemplate.Core.Extensions;
 
@@ -8,7 +8,7 @@ public static class StringExtensions
     {
         try
         {
-            return JsonConvert.DeserializeObject<T>(value);
+            return JsonSerializer.Deserialize<T>(value);
         }
         catch
         {
@@ -16,11 +16,12 @@ public static class StringExtensions
         }
     }
 
-    public static T ToAnonymousObject<T>(this string value, T definition) where T : class
+    public static T ToAnonymousObject<T>(this string value, T definition, JsonSerializerOptions options = default) where T : class
     {
         try
         {
-            return JsonConvert.DeserializeAnonymousType(value, definition);
+            return JsonSerializer.Deserialize<T>(value, options);
+            //return JsonConvert.DeserializeAnonymousType(value, definition);
         }
         catch
         {

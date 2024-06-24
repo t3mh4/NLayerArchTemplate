@@ -8,11 +8,12 @@ namespace NLayerArchTemplate.WebUI.Configuration.BuilderServices
     {
         public static void AddAuthorizationFilter(this MvcOptions options, IConfiguration configuration)
         {
-            if (configuration.GetValue<string>("Features:AuthorizationType") == AuthorizationType.Default.ToString())
+            var authorizationType = configuration.GetValue<string>("Features:AuthorizationType");
+            if (authorizationType == nameof(AuthorizationType.Default))
             {
                 options.Filters.Add(typeof(DefaultAuthorizationFilter));
             }
-            else if (configuration.GetValue<string>("Features:AuthorizationType") == AuthorizationType.DefaultWithSql.ToString())
+            else if (authorizationType == nameof(AuthorizationType.DefaultWithSql))
             {
                 options.Filters.Add(typeof(OnlineAuthorizationFilter));
             }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NLayerArchTemplate.Business.Validators.User;
-using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
@@ -49,6 +49,7 @@ namespace NLayerArchTemplate.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody] HttpRequestModel<int> httpRequest, CancellationToken ct)
         {
+            throw new Exception("hata var");
             Validator<UserDeleteValidator>.Validate(httpRequest.Data);
             var userManager = GetManager<IUserManager>();
             await userManager.Delete(httpRequest.Data, ct);

@@ -14,7 +14,6 @@ using NtierArchTemplate.Business.UserManager;
 using System.Net;
 
 namespace NLayerArchTemplate.WebUI.Configuration.Filters;
-//todo:oturum sonlandırmak için yetkilendirmeyi session ile yer değiştir.
 public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
 {
     public async Task OnAuthorizationAsync(AuthorizationFilterContext context)

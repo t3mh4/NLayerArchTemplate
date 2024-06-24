@@ -1,4 +1,4 @@
-﻿namespace NLayerArchTemplate.Core.ConstantKeys;
+﻿namespace NLayerArchTemplate.Core.ConstantMessages;
 
 public sealed class SuccessCrudMessages
 {

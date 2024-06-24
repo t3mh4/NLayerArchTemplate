@@ -1,12 +1,11 @@
-﻿using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace NLayerArchTemplate.Entities.Abstracts;
 
 public record AAuditEntity
 {
-    [Column(TypeName = "datetime2(3)")]
+    [Column(TypeName = "datetime")]
     [Required]
     public DateTime CreatedDate { get; set; }
 
@@ -14,13 +13,13 @@ public record AAuditEntity
     [MaxLength(150)]
     public string CreatedBy { get; set; }
 
-    [Column(TypeName = "datetime2(3)")]
+    [Column(TypeName = "datetime")]
     public DateTime? ModifiedDate { get; set; }
 
     [MaxLength(150)]
     public string ModifiedBy { get; set; }
 
-    [Column(TypeName = "datetime2(3)")]
+    [Column(TypeName = "datetime")]
     public DateTime? DeletedDate { get; set; }
 
     [MaxLength(150)]

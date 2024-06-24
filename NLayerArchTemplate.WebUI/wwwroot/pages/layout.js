@@ -8,7 +8,7 @@ aufw(async () => {
 
     $("#btnLogout").click(async (e) => {
         e.preventDefault();
-        axs.post_async({
+        await axs.post_async({
             controller: "Account",
             action: "Logout",
         }, (response) => {

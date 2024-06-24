@@ -7,11 +7,9 @@ using NLayerArchTemplate.DataAccess.Repositories.Interfaces;
 using NLayerArchTemplate.Dtos.Login;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
-using NtierArchTemplate.Business.UserManager;
 using NtierArchTemplate.DataAccess.Services.UserService;
-using System.Diagnostics;
 
-namespace NLayerArchTemplate.Business.UserManager;
+namespace NtierArchTemplate.Business.UserManager;
 
 public class UserManager : ABaseManager, IUserManager
 {
@@ -24,12 +22,11 @@ public class UserManager : ABaseManager, IUserManager
     {
         _logger = logger;
         _userService = uow.UserService;
-        Debug.WriteLine("UserManager is created.");
     }
 
     public async Task<UserAuthorizationDto> CheckAuthorization(LoginDto dto, CancellationToken cancellationToken)
     {
-        var user = await _userService.GetByUsername(dto.Username, cancellationToken);
+        var user = await _userService.GetByUsername(dto.Username, cancellationToken).ConfigureAwait(false);
         if (user == null)
         {
             _logger.LogError(GetException(string.Format("{0} kullanıcı adı bulunamadı.", user.Username)), _error);
@@ -56,13 +53,13 @@ public class UserManager : ABaseManager, IUserManager
 
     public async Task<List<UserListItemDto>> GetUserList(CancellationToken ct)
     {
-        return await _userService.GetUserList(ct);
+        return await _userService.GetUserList(ct).ConfigureAwait(false);
     }
 
     public async Task<UserCoreDto> GetByUserId(int userId, CancellationToken ct)
     {
         if (userId == 0) return new UserCoreDto() { IsActive = true };
-        return await _userService.GetByUserId(userId, ct);
+        return await _userService.GetByUserId(userId, ct).ConfigureAwait(false);
     }
 
     public async Task<int> Save(UserSaveDto user, List<string> modifiedProperties, CancellationToken ct)
@@ -71,30 +68,29 @@ public class UserManager : ABaseManager, IUserManager
         if (tblUser.Id == 0)
         {
             tblUser.Password = PasswordHelper.HashPassword(user.Password);
-            await _userService.AddAsync(tblUser, ct);
+            await _userService.AddAsync(tblUser, ct).ConfigureAwait(false);
         }
         else
         {
             if (modifiedProperties.Exists(e => e == nameof(tblUser.Password)))
                 tblUser.Password = PasswordHelper.HashPassword(user.Password);
-            await _userService.UpdateAsync(tblUser, modifiedProperties, ct);
+            await _userService.UpdateAsync(tblUser, modifiedProperties, ct).ConfigureAwait(false);
         }
-        await _uow.SaveAsync();
+        await _uow.SaveAsync(ct).ConfigureAwait(false);
         return tblUser.Id;
     }
 
     public async Task<UserAuthorizationDto> GetByUserName(string username, CancellationToken ct = default)
     {
-        return await _userService.GetByUsername(username, ct);
+        return await _userService.GetByUsername(username, ct).ConfigureAwait(false);
     }
 
     public async Task Delete(int userId, CancellationToken ct)
     {
-        var user = await _userService.GetAsync(g => g.Id == userId, ct);
+        var user = await _userService.GetAsync(g => g.Id == userId, ct).ConfigureAwait(false);
         if (user == null) throw new DataNotFoundException();
-        user.IsDeleted = true;
-        await _userService.UpdateAsync(user, new List<string> { nameof(user.IsDeleted) }, ct);
-        await _uow.SaveAsync();
+        await _userService.DeleteAsync(user, ct).ConfigureAwait(false);
+        await _uow.SaveAsync(ct).ConfigureAwait(false);
     }
 
     private string _error { get { return "UserManager.CheckAuthorization"; } }

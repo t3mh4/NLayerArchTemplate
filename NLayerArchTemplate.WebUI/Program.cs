@@ -4,15 +4,17 @@ using NLayerArchTemplate.WebUI.Helpers;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-var jsonFile = string.Concat("appsettings", environment == "Production" ? "" : "." + environment, ".json");
+var isDevelopment = builder.Environment.IsDevelopment();
+var environmentName = builder.Environment.EnvironmentName;
+var jsonFile = string.Concat("appsettings", environmentName == Environments.Production ? "" : "." + environmentName, ".json");
 builder.Configuration.AddJsonFile(jsonFile, true, true);
 
-builder.Services.Create(builder.Configuration);
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.Create(builder.Configuration, isDevelopment, connectionString);
 
 #region SerilogConfig
-var conn = builder.Configuration.GetConnectionString("DefaultConnection");
-SeriLogHelper.Initialize(conn);
+SeriLogHelper.Initialize(builder.Configuration, connectionString);
 builder.Host.UseSerilog();
 #endregion
 

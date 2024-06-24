@@ -17,12 +17,12 @@ public class Repository<E> : IRepository<E> where E : class
 
     public async Task AddAsync(E entity, CancellationToken cancellationToken)
     {
-        await _dbSet.AddAsync(entity, cancellationToken);
+        await _dbSet.AddAsync(entity, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task AddRangeAsync(IReadOnlyList<E> entities, CancellationToken cancellationToken)
     {
-        await _dbSet.AddRangeAsync(entities, cancellationToken);
+        await _dbSet.AddRangeAsync(entities, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(E entity, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class Repository<E> : IRepository<E> where E : class
         {
             _dbSet.Attach(entity);
             _dbContext.Entry(entity).State = EntityState.Modified;
-        }, cancellationToken);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task UpdateAsync(E entity, IReadOnlyList<string> modifiedProperties, CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ public class Repository<E> : IRepository<E> where E : class
                 if (string.IsNullOrEmpty(property)) continue;
                 entry.Property(property).IsModified = true;
             }
-        }, cancellationToken);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task DeleteAsync(E entity, CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ public class Repository<E> : IRepository<E> where E : class
         await Task.Run(() =>
         {
             _dbContext.Remove(entity);
-        }, cancellationToken);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task DeleteRangeAsync(IReadOnlyList<E> entities, CancellationToken cancellationToken)
@@ -68,12 +68,12 @@ public class Repository<E> : IRepository<E> where E : class
             //    _dbSet.Attach(entity);
             //    _dbContext.Entry(entity).State = EntityState.Deleted;
             //}
-        }, cancellationToken);
+        }, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<E> GetAsync(Expression<Func<E, bool>> predicate, CancellationToken cancellationToken) => await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken);
+    public async Task<E> GetAsync(Expression<Func<E, bool>> predicate, CancellationToken cancellationToken) => await _dbSet.FirstOrDefaultAsync(predicate, cancellationToken).ConfigureAwait(false);
 
-    public async Task<IList<E>> GetAllAsync(CancellationToken cancellationToken) => await _dbSet.ToListAsync(cancellationToken);
+    public async Task<IList<E>> GetAllAsync(CancellationToken cancellationToken) => await _dbSet.ToListAsync(cancellationToken).ConfigureAwait(false);
 
-    public async Task<IList<E>> GetAllAsync(Expression<Func<E, bool>> predicate, CancellationToken cancellationToken) => await _dbSet.Where(predicate).ToListAsync(cancellationToken);
+    public async Task<IList<E>> GetAllAsync(Expression<Func<E, bool>> predicate, CancellationToken cancellationToken) => await _dbSet.Where(predicate).ToListAsync(cancellationToken).ConfigureAwait(false);
 }

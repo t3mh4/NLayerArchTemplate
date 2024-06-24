@@ -1,12 +1,11 @@
-﻿using Newtonsoft.Json;
-using NLayerArchTemplate.Core.Settings;
+﻿using System.Text.Json;
 
 namespace NLayerArchTemplate.Core.Extensions;
 
 public static class ObjectExtensions
 {
-    public static string ToJSON(this object obj)
+    public static string ToJSON(this object obj, JsonSerializerOptions jsonSerializerOptions = default)
     {
-        return JsonConvert.SerializeObject(obj, new CustomJsonSerializerSettings());
+        return JsonSerializer.Serialize(obj, jsonSerializerOptions);
     }
 }

@@ -13,16 +13,13 @@
                 { data: "Username", title: "Kullanıcı Adı" },
                 { data: "Name", title: "Ad" },
                 { data: "Surname", title: "Soyad" },
+                { data: "Email", title: "Email" },
                 {
                     data: "IsActive", title: "Aktif",
                     searchable: false,
                     width: "20",
                     render: DataTable.render.check_box(),
-                },
-                { data: "CreatedBy", title: "Oluşturan" },
-                { data: "CreatedDate", title: "Kayıt Tarihi", render: DataTable.render.moment_tr() },
-                { data: "ModifiedBy", title: "Güncelleyen" },
-                { data: "ModifiedDate", title: "Güncelleme Tarihi", render: DataTable.render.moment_tr() },
+                }
             ]
         }
     });
@@ -83,7 +80,7 @@
         });
         if (swal.isConfirmed) {
             let axs = new axios_request();
-            await axs.post({
+            await axs.post_async({
                 controller: "User",
                 action: "Delete",
                 data: { Data: id }
@@ -96,16 +93,19 @@
 
     $btnSave.click(async () => {
         let axs = new axios_request();
-        await axs.post({
+        console.log(document.querySelector("form"));
+        console.log(form.toObject(document.querySelector("form")));
+        console.log(modifiedProperties);
+        await axs.post_async({
             controller: "User",
             action: "Save",
             data: {
                 Data: form.toObject(document.querySelector("form")),
-                modifiedProperties: modifiedProperties
+                ModifiedProperties: modifiedProperties
             }
-        }, (response) => {
+        }, async (response) => {
             modifiedProperties = [];
-            mdl.hide();
+            await mdl.hide();
             if (response.IsSuccess) {
                 let msg = new message();
                 msg.success({ message: response.Message });

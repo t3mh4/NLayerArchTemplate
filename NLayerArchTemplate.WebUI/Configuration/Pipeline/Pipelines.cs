@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Localization;
+﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Localization;
+using Newtonsoft.Json;
+using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
+using NLayerArchTemplate.Core.Enums;
+using NLayerArchTemplate.Core.Extensions;
+using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.WebUI.Configuration.Middlewares;
 using System.Globalization;
 
@@ -34,6 +41,7 @@ public static class Pipeline
         //add the next one to your middleware pipeline (or just don’t remove it),
         app.UseHsts();
         app.UseHttpsRedirection();
+        app.UseExceptionHandler("/Error/Handle");
         app.UseStaticFiles();
         //app.UseCookiePolicy();
         app.UseRouting();
@@ -54,6 +62,25 @@ public static class Pipeline
         //app.UseResponseCompression();iptal ettim çünkü güvenlik zafiyeti oluşturabilirmiş.
         //app.UseResponseCaching();
         app.UseHealthChecks("/health");
+        app.UseStatusCodePages(context => 
+        {
+            var originalPath = context.HttpContext.Request.Path;
+            var originalQueryString = context.HttpContext.Request.QueryString;
+            var redirectUrl = $"/Error/{context.HttpContext.Response.StatusCode}?originalPath={originalPath}&originalQueryString={originalQueryString}";
+            if (context.HttpContext.Request.Headers.Any(a => a.Key == KeyValues.XRequestedWith))
+            {
+                var errorModel = new ErrorModel
+                {
+                    Message = ErrorMessages.HataliIslem,
+                };
+                context.HttpContext.Response.ContentType = KeyValues.JsonContentType;
+                var response = HttpResponseModel<ErrorModel>.Fail(errorModel);
+                context.HttpContext.Response.WriteAsync(response.ToJSON()).Wait();
+                return Task.CompletedTask;
+            }
+            context.HttpContext.Response.Redirect(redirectUrl);
+            return Task.CompletedTask;
+        });
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(

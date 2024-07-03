@@ -54,12 +54,4 @@ public class AccountController : BaseController
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return new JsonActionResult(HttpResponseModel.Success(AccountMessages.Logout, "/Account/Login"));
     }
-
-    //[HttpPost]
-    //public async Task<IActionResult> CheckCurrentUserSession(CancellationToken ct = default)
-    //{
-    //    //buraya gelmenden önce CustomAuthorization'a uğradığı için burada kontrol yapmaya gerek yok.
-    //    await Task.CompletedTask;
-    //    return new JsonActionResult(HttpResponseModel<bool>.Success(true));
-    //}
 }

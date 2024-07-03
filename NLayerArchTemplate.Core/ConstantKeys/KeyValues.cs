@@ -9,4 +9,5 @@ public sealed class KeyValues
     public const string JsonContentType = "application/json";
     public const string ClaimTypeUserFullName = "UserFullName";
     public const string ClaimTypeEmail = "ClaimTypeEmail";
+    public const string XRequestedWith="X-Requested-With";
 }

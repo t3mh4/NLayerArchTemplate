@@ -11,7 +11,8 @@ namespace NLayerArchTemplate.WebUI.Controllers
 {
     public class UserController : BaseController
     {
-        public IActionResult Index()
+        [HttpGet]
+        public IActionResult Index(string keyvalue)
         {
             ViewBag.PageHeader = "Kullanıcı Listesi";
             return View();
@@ -49,7 +50,6 @@ namespace NLayerArchTemplate.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody] HttpRequestModel<int> httpRequest, CancellationToken ct)
         {
-            throw new Exception("hata var");
             Validator<UserDeleteValidator>.Validate(httpRequest.Data);
             var userManager = GetManager<IUserManager>();
             await userManager.Delete(httpRequest.Data, ct);

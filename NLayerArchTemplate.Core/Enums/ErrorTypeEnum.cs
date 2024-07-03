@@ -4,5 +4,6 @@ public enum ErrorType
 {
     Default = 0,
     Validation = 1,
-    Session = 2
+    HttpRequest = 2,
+    Authorization = 3
 }

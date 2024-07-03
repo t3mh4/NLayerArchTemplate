@@ -3,12 +3,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.Enums;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
-using NLayerArchTemplate.WebUI.Configuration.Extensions;
 using NLayerArchTemplate.WebUI.Helpers;
 using NtierArchTemplate.Business.UserManager;
 using System.Net;
@@ -21,14 +19,6 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
 
         var httpContext = context.HttpContext;
         var httpContextRequest = httpContext.Request;
-        //ajax requestler axios ile yapılıp yapılmadığı kontrol ediliyor.
-        if (!CheckIfRequestIsValid(httpContextRequest))
-        {
-            var statusCode = HttpStatusCode.BadRequest.ToInt32();
-            var resModel = HttpResponseModel.Fail("Hatalı İşlem..!!");
-            context.Result = new JsonActionResult(resModel, statusCode);
-            return;
-        }
         if (IsAllowedAnonymous(context) || await IsUserAuthenticated(httpContext)) return;
         var queryString = httpContextRequest.QueryString.ToString();
         var path = httpContextRequest.Path.Value;
@@ -40,13 +30,7 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
             context.Result = redirectResult;
             return;
         }
-        var responseModel = GetSessionRespose();
-        //Link üzerinden bir sayfaya gidilmek istediğinde aşağıda ki metod kullanılır.
-        if (returnUrl.Contains("CheckCurrentUserSession"))
-        {
-            var obj = new { Data = string.Empty };
-            returnUrl = string.Concat("?ReturnUrl=", httpContextRequest.GetPostData(obj)?.Data);
-        }
+        var responseModel = GetUnAuthorizationRespose();
         responseModel.ReturnUrl += returnUrl;
         context.Result = new JsonActionResult(responseModel, HttpStatusCode.OK.ToInt32());
     }
@@ -64,24 +48,12 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
         return UserHelper.IsUserAuthenticated(httpContext);
     }
 
-    /// <summary>
-    /// Only Axios requests are allowed
-    /// </summary>
-    /// <param name="context"></param>
-    /// <returns></returns>
-    private bool CheckIfRequestIsValid(HttpRequest httpContextRequest)
-    {
-        if (httpContextRequest.ContentType == KeyValues.JsonContentType)
-            return httpContextRequest.Headers.Any(f => f.Key == "x-httprequest-type" && f.Value == "Axios");
-        return true;
-    }
-
-    private HttpResponseModel<ErrorModel> GetSessionRespose()
+    private HttpResponseModel<ErrorModel> GetUnAuthorizationRespose()
     {
         var errorModel = new ErrorModel
         {
             StackTrace = string.Empty,
-            ErrorType = ErrorType.Session,
+            ErrorType = ErrorType.Authorization,
         };
         return HttpResponseModel<ErrorModel>.Fail(errorModel, "Oturumunuz sona ermiştir.<br/>Giriş sayfasına yönlendiriliyorsunuz..!!", "/Account/Login");
     }
@@ -90,5 +62,4 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
     {
         return context.ActionDescriptor.EndpointMetadata.OfType<AllowAnonymousAttribute>().Any();
     }
-
 }

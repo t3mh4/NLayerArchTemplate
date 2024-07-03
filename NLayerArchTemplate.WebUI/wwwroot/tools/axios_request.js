@@ -5,9 +5,7 @@ class axios_request {
     #errorTypes = {
         Default: 0,
         Validation: 1,
-        Session: 2,
-        Authorization: 3,
-        NotFound: 4,
+        HttpRequest: 2
     };
 
     #config = {
@@ -18,27 +16,6 @@ class axios_request {
             "Accept": "application/json",
         }
     };
-
-    //this classic method is deprecated by me
-    //post = async (options) => {
-    //    let postOptions = this.#getPostOptions(options);
-
-    //    try {
-    //        let response = await axios.post(postOptions.url, postOptions.data, this.#config)
-    //        this.after_response(response.data);
-    //    } catch (err) {
-    //        if (err.response) {
-    //            this.#showError(err.response.data.Data);
-    //            // The client was given an error response (5xx, 4xx)
-    //        } else if (err.request) {
-    //            console.log(err.request);
-    //            // The client never received a response, and the request was never left
-    //        } else {
-    //            console.log("Beklendik bir hata ile karşılaşıldı..!!");
-    //            // Anything else
-    //        }
-    //    }
-    //}
 
     get = (options, callback) => {
         let getOptions = this.#getGetOptions(options);
@@ -78,8 +55,6 @@ class axios_request {
             callback(response.data);
     }
 
-    //after_response = (response) => undefined;
-
     #getPostOptions(options) {
         let defOptions = {
             url: "",
@@ -95,16 +70,14 @@ class axios_request {
     #getGetOptions(options) {
         let defOptions = {
             url: "",
-            //params: undefined,
         };
         this.#config.headers["X-Requested-With"] = "GET";
-        defOptions.url = '/' + options.controller + "/" + options.action;// + '?' + new URLSearchParams(options.params).toString();;
+        defOptions.url = '/' + options.controller + "/" + options.action;
         defOptions.params =  options.params ;
         return defOptions;
     }
 
     #handleError(err) {
-        //err.response.data = HttpResponse -> Data,Message,IsSuccess,ReturnUrl
         if (err.response) {
             if (err.response.data.Data)//ErrorController.Handle'dan gelen hataları gösteriyoruz
                 this.#showError(err.response.data);
@@ -128,14 +101,12 @@ class axios_request {
         if (reponseData.Data.ErrorType == this.#errorTypes.Validation) {
             this.#showValidationErrors(JSON.parse(reponseData.Data.Message));
         }
-        else if (reponseData.Data.ErrorType == this.#errorTypes.Session) {
-            this.#showSessionError(reponseData);
+        else if (reponseData.Data.ErrorType == this.#errorTypes.HttpRequest) {
+            this.#showHttpRequestError(reponseData);
         }
         else {
             let msg = new message();
             msg.error({ message: reponseData.Data.Message });
-            console.cError("Message : " + reponseData.Data.Message);
-            console.cError("StackTrace : " + reponseData.Data.StackTrace);
         }
     }
 
@@ -148,19 +119,15 @@ class axios_request {
         msg.error({ message: text });
     }
 
-    #showSessionError(reponseData) {
+    #showHttpRequestError(reponseData) {
         let msg = new message();
-        msg.hidden = () => {
-            window.location.href = reponseData.ReturnUrl;
-        }
-        msg.error({ message: reponseData.Message });
+        msg.error({ message: reponseData.Data.Message + " (HttpRequest)" });
     }
 }
 
 class form {
     static toObject(form) {
         let formData = new FormData(form);
-        console.log(formData);
         return Object.fromEntries(formData);
     }
 }

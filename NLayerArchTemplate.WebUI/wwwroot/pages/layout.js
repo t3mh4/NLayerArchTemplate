@@ -27,33 +27,4 @@ aufw(async () => {
     $(document).on("hidden.bs.modal", ".dtr-bs-modal", function () {
         $(this).detach();
     });
-
-    //$(".navigation").click(async (e) => {
-    //    let url = e.currentTarget.href;
-    //    e.preventDefault();
-    //    checkCurrentUserSession((response) => {
-    //        let msg = new message();
-    //        if (!response.IsSuccess) {
-    //            msg.hidden = () => {
-    //                window.location.href = response.ReturnUrl;
-    //            }
-    //            msg.info({ message: response.Message, timeOut: 2000 });
-    //        }
-    //        else {
-    //            window.location.href = url;
-    //        }
-    //    });
-    //});
-
-    //async function checkCurrentUserSession(callback) {
-    //    let url = window.location.pathname + window.location.search;
-    //    await axs.post_async({
-    //        controller: "Account",
-    //        action: "CheckCurrentUserSession",
-    //        data: url
-    //    }, callback);
-    //}
-
-    //responsive modal'ın eventi
-    
 });

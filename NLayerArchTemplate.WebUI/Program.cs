@@ -14,7 +14,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.Create(builder.Configuration, isDevelopment, connectionString);
 
 #region SerilogConfig
-SeriLogHelper.Initialize(builder.Configuration, connectionString);
+SeriLogHelper.Initialize(builder.Configuration);
 builder.Host.UseSerilog();
 #endregion
 

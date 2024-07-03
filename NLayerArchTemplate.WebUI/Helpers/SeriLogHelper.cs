@@ -1,36 +1,20 @@
 ﻿using Serilog;
 using Serilog.Settings.Configuration;
-using MySql.Data.MySqlClient;
+using NLayerArchTemplate.Core.Enums;
 
 namespace NLayerArchTemplate.WebUI.Helpers;
 
 public class SeriLogHelper
 {
-    public static void Initialize(IConfiguration configuration, string connectionString)
+    public static void Initialize(IConfiguration configuration)
     {
         var sectionName = "SerilogFile";
-        if (IsDatabaseAvaliable(connectionString))
+        if (configuration.GetValue<string>("LogType") == nameof(LogTypeEnum.Database))
             sectionName = "SeriLogDb";
         Log.Logger = new LoggerConfiguration()
                .ReadFrom.Configuration(configuration, new ConfigurationReaderOptions { SectionName = sectionName })
                .Enrich.FromLogContext()
                .CreateLogger();
-    }
-
-    private static bool IsDatabaseAvaliable(string connectionString)
-    {
-        try
-        {
-            using (var connection = new MySqlConnection(connectionString))
-            {
-                connection.Open();
-                return true;
-            }
-        }
-        catch (MySqlException ex)
-        {
-            return false;
-        }
     }
 }
    

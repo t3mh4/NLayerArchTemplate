@@ -1,4 +1,11 @@
-﻿namespace NLayerArchTemplate.WebUI.Configuration.Middlewares;
+﻿using Microsoft.Extensions.Primitives;
+using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
+using NLayerArchTemplate.Core.Enums;
+using NLayerArchTemplate.Core.Extensions;
+using NLayerArchTemplate.Core.Models;
+
+namespace NLayerArchTemplate.WebUI.Configuration.Middlewares;
 
 public class SecurityHeadersMiddleware
 {
@@ -14,6 +21,7 @@ public class SecurityHeadersMiddleware
 
     public async Task Invoke(HttpContext context)
     {
+        if (!await IsRequestValid(context)) return;
         string currentEnvironment = _environment.EnvironmentName;
         if (currentEnvironment == "Production")
         {
@@ -26,7 +34,6 @@ public class SecurityHeadersMiddleware
             context.Response.Headers["X-Content-Type-Options"] = "nosniff";
             //to not allow browsers to display your website as last visited in “Referer” header
             context.Response.Headers["Referrer-Policy"] = "no-referrer";//
-
             //disable the possibility of Flash making cross-site requests
             context.Response.Headers["X-Permitted-Cross-Domain-Policies"] = "none";
             // to stop loading the page when a cross-site scripting attack is identified. 
@@ -46,5 +53,28 @@ public class SecurityHeadersMiddleware
                 "frame-ancestors 'self';";
         }
         await _next.Invoke(context);
+    }
+
+    private async Task<bool> IsRequestValid(HttpContext context)
+    {
+        if (context.Request.Headers.TryGetValue(KeyValues.XRequestedWith, out StringValues keyx)
+            && context.Request.Headers.TryGetValue("x-httpRequest-type", out StringValues key))
+        {
+            if ((keyx.Equals("POST") || keyx.Equals("GET"))
+                && !key.Equals("Axios"))
+            {
+                context.Response.ContentType = KeyValues.JsonContentType;
+                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                var errorModel = new ErrorModel
+                {
+                    Message = ErrorMessages.HataliIslem,
+                    ErrorType = ErrorType.HttpRequest
+                };
+                var response = HttpResponseModel<ErrorModel>.Fail(errorModel);
+                await context.Response.WriteAsync(response.ToJSON());
+                return false;
+            }
+        }
+        return true;
     }
 }

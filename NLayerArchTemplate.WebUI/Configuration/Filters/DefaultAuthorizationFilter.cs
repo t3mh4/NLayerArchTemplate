@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Enums;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
@@ -16,7 +17,7 @@ public sealed class DefaultAuthorizationFilter : IAuthorizationFilter
     {
         var httpContext = context.HttpContext;
         var httpContextRequest = httpContext.Request;
-        if (IsAllowedAnonymous(context) || IsUserAuthenticated(httpContext)) return;
+        if (IsAllowedAnonymous(context) || UserHelper.IsUserAuthenticated(httpContext)) return;
         //client side'dan gelen http requestler axios ile yapılıp yapılmadığı kontrol ediliyor.
         var queryString = httpContextRequest.QueryString.ToString();
         var path = httpContextRequest.Path.Value;
@@ -24,26 +25,21 @@ public sealed class DefaultAuthorizationFilter : IAuthorizationFilter
         var xRequest = httpContextRequest.Headers[KeyValues.XRequestedWith].ToString();
         if (string.IsNullOrWhiteSpace(xRequest))
         {
-            var redirectResult = new RedirectResult("/Account/Login" + returnUrl);
+            var redirectResult = new RedirectResult(AccountUrlKeys.Login + returnUrl);
             context.Result = redirectResult;
             return;
         }
         context.Result = new JsonActionResult(GetUnAuthorizationRespose(), HttpStatusCode.BadRequest.ToInt32());
     }
 
-    private bool IsUserAuthenticated(HttpContext httpContext)
-    {
-        return UserHelper.IsUserAuthenticated(httpContext);
-    }
-
-    private HttpResponseModel<ErrorModel> GetUnAuthorizationRespose(string returnUrl = "/Account/Login")
+    private HttpResponseModel<ErrorModel> GetUnAuthorizationRespose(string returnUrl = AccountUrlKeys.Login)
     {
         var errorModel = new ErrorModel
         {
             StackTrace = string.Empty,
             ErrorType = ErrorType.Authorization,
         };
-        return HttpResponseModel<ErrorModel>.Fail(errorModel, "Oturumunuz sona ermiştir.<br/>Giriş sayfasına yönlendiriliyorsunuz..!!", returnUrl);
+        return HttpResponseModel<ErrorModel>.Fail(errorModel, ErrorMessages.LogOut, returnUrl);
     }
 
     private static bool IsAllowedAnonymous(AuthorizationFilterContext context)

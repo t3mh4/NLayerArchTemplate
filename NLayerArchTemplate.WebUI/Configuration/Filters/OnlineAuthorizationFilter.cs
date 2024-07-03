@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using NLayerArchTemplate.Core.ConstantKeys;
+using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Enums;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
@@ -26,7 +28,7 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
         //refresh yapılan sayfalara bu şekilde cevap dönülür.
         if (string.IsNullOrEmpty(httpContextRequest.ContentType))
         {
-            var redirectResult = new RedirectResult("/Account/Login" + returnUrl);
+            var redirectResult = new RedirectResult(AccountUrlKeys.Login + returnUrl);
             context.Result = redirectResult;
             return;
         }
@@ -55,7 +57,7 @@ public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter
             StackTrace = string.Empty,
             ErrorType = ErrorType.Authorization,
         };
-        return HttpResponseModel<ErrorModel>.Fail(errorModel, "Oturumunuz sona ermiştir.<br/>Giriş sayfasına yönlendiriliyorsunuz..!!", "/Account/Login");
+        return HttpResponseModel<ErrorModel>.Fail(errorModel, ErrorMessages.LogOut, AccountUrlKeys.Login);
     }
 
     private static bool IsAllowedAnonymous(AuthorizationFilterContext context)

@@ -2,7 +2,7 @@
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
 
-namespace NtierArchTemplate.DataAccess.Services.UserService;
+namespace NLayerArchTemplate.DataAccess.Services.UserService;
 
 public interface IUserService : IRepository<TblUser>
 {

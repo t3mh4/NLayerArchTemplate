@@ -8,8 +8,8 @@ using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.Dtos.Login;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
-using NtierArchTemplate.Business.UserManager;
-using NtierArchTemplate.Business.Validators;
+using NLayerArchTemplate.Business.UserManager;
+using NLayerArchTemplate.Business.Validators;
 using System.Net;
 using System.Security.Claims;
 
@@ -41,7 +41,8 @@ public class AccountController : BaseController
         {
             new(ClaimTypes.NameIdentifier,request.Data.Username),
             new(KeyValues.ClaimTypeUserFullName,$"{user.Name} {user.Surname}"),
-            new(KeyValues.ClaimTypeEmail,user.Email),
+            new(KeyValues.ClaimTypeEmail,user.Email),			
+            new(KeyValues.ClaimTypeId,user.Id.ToString())
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
@@ -52,6 +53,6 @@ public class AccountController : BaseController
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        return new JsonActionResult(HttpResponseModel.Success(AccountMessages.Logout, "/Account/Login"));
+        return new JsonActionResult(HttpResponseModel.Success(AccountMessages.Logout, AccountUrlKeys.Login));
     }
 }

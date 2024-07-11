@@ -6,18 +6,17 @@ Object.deepGet = (obj, path, separator = '.') => {
     return properties.reduce((prev, curr) => prev?.[curr], obj);
 }
 
-Number.prototype.isFloat = (n) => {
-    return typeof n == 'number' && !isNaN(n) && !Number.isInteger(n)
+Number.prototype.isFloat = function(){
+    return typeof this == 'number' && !isNaN(this) && !Number.isInteger(this)
 }
 
-String.prototype.isEmpty = (str) => {
-    return typeof str !== "string" || str === "";
+String.prototype.isEmpty = function () {
+    return typeof this !== "string" || this === "";
 }
 
-Array.prototype.isEmpty = (arr) => {
-    return !Array.isArray(arr) || !arr || arr.length === 0;
+Array.prototype.isEmpty = function () {
+    return !Array.isArray(this) || !this || this.length === 0;
 }
-
 
 console.cError = function (message) {
     const error = new Error();
@@ -29,6 +28,11 @@ console.cInfo = function (message) {
     const error = new Error();
     const callerLine = error.stack.split('\n')[2].trim();
     console.log(`%c${message} (${callerLine})`, 'background-color: white; color: green; font-style: italic;');
+};
+
+HTMLFormElement.prototype.toObject = function () {
+    let formData = new FormData(this);
+    return Object.fromEntries(formData);
 };
 
 //HTMLFormElement.prototype.getModifiedInputName = function () {

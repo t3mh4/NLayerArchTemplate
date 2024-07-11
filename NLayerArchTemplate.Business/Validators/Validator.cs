@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using NLayerArchTemplate.Core.Extensions;
 
-namespace NtierArchTemplate.Business.Validators;
+namespace NLayerArchTemplate.Business.Validators;
 
 public static class Validator<T> where T : new()
 {

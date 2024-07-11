@@ -9,9 +9,9 @@ using NLayerArchTemplate.Core.Enums;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
-using NLayerArchTemplate.WebUI.Helpers;
-using NtierArchTemplate.Business.UserManager;
+using NLayerArchTemplate.Business.UserManager;
 using System.Net;
+using NLayerArchTemplate.Core.Helper;
 
 namespace NLayerArchTemplate.WebUI.Configuration.Filters;
 public sealed class OnlineAuthorizationFilter : IAsyncAuthorizationFilter

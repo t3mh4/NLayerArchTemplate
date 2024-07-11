@@ -4,11 +4,11 @@ using Microsoft.Extensions.DependencyInjection;
 using NLayerArchTemplate.DataAccess;
 using NLayerArchTemplate.DataAccess.Repositories;
 using NLayerArchTemplate.DataAccess.Repositories.Interfaces;
-using NLayerArchTemplate.DataAccess.Services.UserService;
-using NtierArchTemplate.Business.UserManager;
-using NtierArchTemplate.DataAccess.Services.UserService;
+using Scrutor;
+using NLayerArchTemplate.Business.Abstracts;
 
-namespace NtierArchTemplate.Business;
+namespace NLayerArchTemplate.Business;
+
 
 public static class DependencyResolver
 {
@@ -18,7 +18,9 @@ public static class DependencyResolver
         services.AddHttpContextAccessor();
         services.AddDbContext<ApplicationDbContext>(options =>
         {
-            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            options.UseMySql(connectionString,
+                             ServerVersion.AutoDetect(connectionString),
+                             x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
             if (isDevelopment)
             {
                 options.EnableDetailedErrors();
@@ -26,11 +28,29 @@ public static class DependencyResolver
                 options.LogTo(Console.WriteLine, new[] { DbLoggerCategory.Database.Command.Name });
             }
         });
-        services.AddTransient<IUserManager, UserManager.UserManager>();
-        services.AddTransient<IUserService, UserService>();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddValidatorsFromAssembly(typeof(DependencyResolver).Assembly); // register validators
         services.AddAutoMapper(typeof(DependencyResolver).Assembly); // register automapper
+
+        services.Scan(scan =>
+        {
+            scan.FromAssemblies(typeof(Repository<>).Assembly)
+                .AddClasses(x => x.AssignableTo(typeof(IRepository<>)))
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                .AsMatchingInterface()
+                .WithScopedLifetime();
+        });
+
+        services.Scan(scan =>
+        {
+            scan.FromAssemblies(typeof(ABaseManager).Assembly)
+                .AddClasses(x => x.AssignableTo(typeof(ABaseManager)))
+                .UsingRegistrationStrategy(RegistrationStrategy.Skip)
+                .AsMatchingInterface()
+                .WithScopedLifetime();
+        });
+
         return services;
     }
 }
+

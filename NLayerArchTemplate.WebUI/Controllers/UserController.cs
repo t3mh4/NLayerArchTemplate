@@ -4,15 +4,17 @@ using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
-using NtierArchTemplate.Business.UserManager;
-using NtierArchTemplate.Business.Validators;
+using NLayerArchTemplate.Business.UserManager;
+using NLayerArchTemplate.Business.Validators;
+using NLayerArchTemplate.WebUI.Helpers;
+using NLayerArchTemplate.Core.Helper;
 
 namespace NLayerArchTemplate.WebUI.Controllers
 {
     public class UserController : BaseController
     {
         [HttpGet]
-        public IActionResult Index(string keyvalue)
+        public IActionResult Index()
         {
             ViewBag.PageHeader = "Kullanıcı Listesi";
             return View();
@@ -50,6 +52,11 @@ namespace NLayerArchTemplate.WebUI.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete([FromBody] HttpRequestModel<int> httpRequest, CancellationToken ct)
         {
+			if (httpRequest.Data.ToString() == UserHelper.GetUserId(HttpContext))
+			{
+				var responsex = HttpResponseModel.Fail("Şuan kullandığınız kullanıcı silinemez..!!");
+				 return new JsonActionResult(responsex);
+			}
             Validator<UserDeleteValidator>.Validate(httpRequest.Data);
             var userManager = GetManager<IUserManager>();
             await userManager.Delete(httpRequest.Data, ct);

@@ -1,11 +1,16 @@
 ﻿aufw(async () => {
     let modifiedProperties = [];
     let datatable = new aufw_datatable();
+    let controller = "User";
+    let getAllAction = "GetAll";
+    let coreAction = "CorE";
+    let deleteAction = "Delete";
+    let saveAction = "Save";
     await datatable.load({
         $dt: $("#tblKullanici"),
         axiosRequest: {
-            controller: "User",
-            action: "GetAll"
+            controller: controller,
+            action: getAllAction
         },
         dataTable: {
             columns: [
@@ -33,8 +38,8 @@
         await mdl.show({
             title: "Yeni Kayıt",
             axiosRequest: {
-                controller: "User",
-                action: "CorE",
+                controller: controller,
+                action: coreAction,
                 data: { Data: 0 }
             }
         });
@@ -50,8 +55,8 @@
         await mdl.show({
             title: "Güncelle",
             axiosRequest: {
-                controller: "User",
-                action: "CorE",
+                controller: controller,
+                action: coreAction,
                 data: { Data: id }
             }
         });
@@ -81,36 +86,39 @@
         if (swal.isConfirmed) {
             let axs = new axios_request();
             await axs.post_async({
-                controller: "User",
-                action: "Delete",
+                controller: controller,
+                action: deleteAction,
                 data: { Data: id }
             }, (response) => {
-                msg.success({ message: response.Message });
-                datatable.refresh();
+                if (response.IsSuccess) {
+					msg.success({ message: response.Message });
+					datatable.refresh();
+					}
+					else
+						msg.error({ message: response.Message });
             });
         }
     });
 
     $btnSave.click(async () => {
         let axs = new axios_request();
-        console.log(document.querySelector("form"));
-        console.log(form.toObject(document.querySelector("form")));
-        console.log(modifiedProperties);
         await axs.post_async({
-            controller: "User",
-            action: "Save",
+            controller: controller,
+            action: saveAction,
             data: {
-                Data: form.toObject(document.querySelector("form")),
+                Data: document.querySelector("form").toObject(),
                 ModifiedProperties: modifiedProperties
             }
         }, async (response) => {
             modifiedProperties = [];
             await mdl.hide();
-            if (response.IsSuccess) {
-                let msg = new message();
-                msg.success({ message: response.Message });
-                datatable.refresh();
-            }
-        });
-    });
+            let msg = new message();
+			if (response.IsSuccess) {
+				msg.success({ message: response.Message });
+				datatable.refresh();
+			}
+			else
+				msg.error({ message: response.Message });
+					});
+				});
 });

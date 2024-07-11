@@ -1,7 +1,7 @@
 ﻿using NLayerArchTemplate.Dtos.Login;
 using NLayerArchTemplate.Dtos.User;
 
-namespace NtierArchTemplate.Business.UserManager;
+namespace NLayerArchTemplate.Business.UserManager;
 
 public interface IUserManager
 {

@@ -75,7 +75,7 @@
 		};
 	};
 
-	DataTable.render.check_box = function (from = 'DD.MM.YYYY HH:mm:ss', to = 'DD.MM.YYYY HH:mm:ss') {
+	DataTable.render.check_box = function () {
 
 		return function (d, type, row) {
 			let isTrue = false;

@@ -1,4 +1,4 @@
-﻿using NtierArchTemplate.DataAccess.Services.UserService;
+﻿using NLayerArchTemplate.DataAccess.Services.UserService;
 
 namespace NLayerArchTemplate.DataAccess.Repositories.Interfaces;
 

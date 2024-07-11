@@ -3,7 +3,7 @@ using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.DataAccess.Repositories;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
-using NtierArchTemplate.DataAccess.Services.UserService;
+using NLayerArchTemplate.DataAccess.Services.UserService;
 
 namespace NLayerArchTemplate.DataAccess.Services.UserService;
 
@@ -26,7 +26,7 @@ public class UserService : Repository<TblUser>, IUserService
                  Email = s.Email,
                  IsActive = s.IsActive,
              });
-        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false) ?? throw new Exception(UserServiceMessages.KullaniciBulunamadi);
+        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false);
     }
 
     public async Task<UserAuthorizationDto> GetByUsername(string username, CancellationToken ct)
@@ -43,7 +43,7 @@ public class UserService : Repository<TblUser>, IUserService
                   IsActive = s.IsActive,
                   IsDeleted = s.IsDeleted
               });
-        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false) ?? throw new Exception(UserServiceMessages.KullaniciBulunamadi);
+        return await query.FirstOrDefaultAsync(ct).ConfigureAwait(false);
     }
 
     public async Task<List<UserListItemDto>> GetUserList(CancellationToken ct)

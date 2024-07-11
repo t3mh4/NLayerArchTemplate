@@ -124,10 +124,3 @@ class axios_request {
         msg.error({ message: reponseData.Data.Message + " (HttpRequest)" });
     }
 }
-
-class form {
-    static toObject(form) {
-        let formData = new FormData(form);
-        return Object.fromEntries(formData);
-    }
-}

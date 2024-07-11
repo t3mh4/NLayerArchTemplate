@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NLayerArchTemplate.Core.Abstracts;
 using NLayerArchTemplate.DataAccess.Repositories.Interfaces;
-using NtierArchTemplate.DataAccess.Services.UserService;
+using NLayerArchTemplate.DataAccess.Services.UserService;
 
 namespace NLayerArchTemplate.DataAccess.Repositories;
 

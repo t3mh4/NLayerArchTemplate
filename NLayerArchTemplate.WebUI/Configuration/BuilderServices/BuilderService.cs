@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.Settings;
 using NLayerArchTemplate.WebUI.Configuration.BuilderServices;
-using NtierArchTemplate.Business;
+using NLayerArchTemplate.Business;
 
 namespace NLayerArchTemplate.WebUI.BuilderServices;
 

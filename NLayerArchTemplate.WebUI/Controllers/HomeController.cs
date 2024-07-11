@@ -4,6 +4,7 @@ namespace NLayerArchTemplate.WebUI.Controllers
 {
     public class HomeController : Controller
     {
+		[Route("Home")]
         [HttpGet]
         public async Task<IActionResult> Index()
         {

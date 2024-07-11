@@ -7,9 +7,11 @@ using NLayerArchTemplate.DataAccess.Repositories.Interfaces;
 using NLayerArchTemplate.Dtos.Login;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
-using NtierArchTemplate.DataAccess.Services.UserService;
+using NLayerArchTemplate.DataAccess.Services.UserService;
+using NLayerArchTemplate.Core.Enums;
+using NLayerArchTemplate.Core.Extensions;
 
-namespace NtierArchTemplate.Business.UserManager;
+namespace NLayerArchTemplate.Business.UserManager;
 
 public class UserManager : ABaseManager, IUserManager
 {
@@ -88,6 +90,7 @@ public class UserManager : ABaseManager, IUserManager
     public async Task Delete(int userId, CancellationToken ct)
     {
         var user = await _userService.GetAsync(g => g.Id == userId, ct).ConfigureAwait(false);
+		if (user.Id == UserEnum.Admin.ToInt32()) throw new Exception("Admin kullanıcısı silinemez..!!");
         if (user == null) throw new DataNotFoundException();
         await _userService.DeleteAsync(user, ct).ConfigureAwait(false);
         await _uow.SaveAsync(ct).ConfigureAwait(false);

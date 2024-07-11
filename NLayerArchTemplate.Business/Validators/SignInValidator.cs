@@ -1,13 +1,21 @@
 ﻿using FluentValidation;
 using NLayerArchTemplate.Dtos.Login;
 
-namespace NtierArchTemplate.Business.Validators;
+namespace NLayerArchTemplate.Business.Validators;
 
 public class SignInValidator : AbstractValidator<LoginDto>
 {
     public SignInValidator()
     {
-        RuleFor(x => x.Username).NotEmpty().NotNull().WithName("Kullanıcı Adı");
-        RuleFor(x => x.Password).NotEmpty().NotNull().WithName("Şifre");
+         RuleFor(x => x.Username).NotEmpty()
+                         .NotNull()
+                         .Matches(@"[^'\x22]+")
+                         .WithMessage("'{PropertyName}' için özel karakter kullanmayınız.")
+                         .WithName("Kullanıcı Adı");
+		RuleFor(x => x.Password).NotEmpty()
+                         .NotNull()
+                         .Matches(@"[^'\x22]+")
+                         .WithMessage("'{PropertyName}' için özel karakter kullanmayınız.")
+                         .WithName("Şifre");
     }
 }

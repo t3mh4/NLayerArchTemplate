@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using NLayerArchTemplate.Core.ConstantKeys;
-using NLayerArchTemplate.Core.Settings;
 using NLayerArchTemplate.WebUI.Configuration.BuilderServices;
 using NLayerArchTemplate.Business;
+using NLayerArchTemplate.WebUI.Configuration.Converter;
 
 namespace NLayerArchTemplate.WebUI.BuilderServices;
 
@@ -14,8 +14,6 @@ public static class BuilderService
                               bool isDevelopment,
                               string connectionString)
     {
-        var jsonSettings = new CustomJsonSerializerSettings();
-
         // Add services to the container.
         services.AddControllersWithViews(options =>
         {
@@ -23,14 +21,16 @@ public static class BuilderService
             options.AddAuthorizationFilter(configuration);
             //HttpPost,HttpPatch gibi işlemlerde token doğrulaması yapar.(ClickJacking saldırısını önlemek için gerekli.)
             options.Filters.Add(typeof(AutoValidateAntiforgeryTokenAttribute));
-        }).AddNewtonsoftJson(options => //System.Text.Json yerine Newtonsoft'u kullanabilmek için eklendi.
-        {
-            options.SerializerSettings.ContractResolver = jsonSettings.ContractResolver;
-            options.SerializerSettings.ReferenceLoopHandling = jsonSettings.ReferenceLoopHandling;
-            options.SerializerSettings.DateFormatString = jsonSettings.DateFormatString;
-            options.SerializerSettings.Formatting = jsonSettings.Formatting;
         }).AddRazorRuntimeCompilation();//cshtml files will be compiled on runtime
-
+        
+        services.Configure<JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new StringToBoolConverter());
+            options.JsonSerializerOptions.WriteIndented = true; // Veriyi okunabilir şekilde formatlamak için
+            options.JsonSerializerOptions.PropertyNamingPolicy = null; // JsonNamingPolicy.PascalCase için
+            options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+            options.JsonSerializerOptions.IncludeFields = true;
+        });
 
         //Business katmanında kullanılacak DI'lar içn eklendi.
         services.AddBusinessServices(isDevelopment, connectionString);

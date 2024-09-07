@@ -1,6 +1,6 @@
 ﻿namespace NLayerArchTemplate.Dtos.User
 {
-    public class UserSaveDto
+    public record UserSaveDto
     {
         public int Id { get; set; }
         public string Username { get; set; }

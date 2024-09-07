@@ -9,7 +9,6 @@
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
 	  <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
-	  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 
 </Project>

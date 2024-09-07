@@ -45,9 +45,10 @@ HTMLFormElement.prototype.toObject = function () {
     return data;
 };
 
-//HTMLFormElement.prototype.getModifiedInputName = function () {
-//    $(this).on('change paste', 'input, select, textarea', (e) => {
-//        let property = e.target.name;//this.name.substring(this.name.lastIndexOf('.') + 1, this.name.length);
-
-//    });
-//};
+HTMLFormElement.prototype.handleInputsEventTo = function (modifiedProperties) {
+    $(this).on('change paste', 'input, select, textarea', (e) => {
+        let property = e.target.name;
+        if (modifiedProperties.indexOf(property) === -1)
+            modifiedProperties.push(property);
+    });
+};

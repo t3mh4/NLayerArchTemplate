@@ -3,7 +3,7 @@
 aufw(() => {
     $("#Username").focus();
 
-    let sb = new aufw_spinner_button("btnLogin");
+    let sb = new aufw_button_spinner("btnLogin");
 
     sb.click_event = async () => {
         let data = document.querySelector("form").toObject();

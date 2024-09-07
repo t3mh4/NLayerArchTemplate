@@ -22,8 +22,7 @@ public class SecurityHeadersMiddleware
     public async Task Invoke(HttpContext context)
     {
         if (!await IsRequestValid(context)) return;
-        string currentEnvironment = _environment.EnvironmentName;
-        if (currentEnvironment == "Production")
+        if (_environment.IsProduction())
         {
             context.Response.Headers["Server"] = string.Empty;
 

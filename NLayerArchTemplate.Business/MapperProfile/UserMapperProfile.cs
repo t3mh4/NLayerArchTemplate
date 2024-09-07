@@ -4,9 +4,9 @@ using NLayerArchTemplate.Entities;
 
 namespace NLayerArchTemplate.Business.MapperProfile;
 
-public class MapperProfile : Profile
+public class UserMapperProfile : Profile
 {
-    public MapperProfile()
+    public UserMapperProfile()
     {
         CreateMap<UserSaveDto, TblUser>()
             .ForMember(f => f.Password, opt => opt.Ignore());

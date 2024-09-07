@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.Enums;
+using NLayerArchTemplate.Core.Exceptions;
 using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
@@ -42,44 +43,39 @@ public class ErrorController : Controller
             SaveLog(originalPath);
             return new RedirectResult(redirectUrl);
         }
+		
         switch (exception)
-        {
-            case ValidationException:
-                _errorModel = GetValidationExceptionModel(exception as ValidationException);
-                code = HttpStatusCode.BadRequest.ToInt32();
-                break;
-            default:
-                _errorModel = GetExceptionModel(exception);
-                break;
-        }
+		{
+			case ValidationException:
+				_errorModel = ErrorModel.Create((exception as ValidationException)?.GetMessage(), String.Empty, ErrorType.Validation);//GetValidationExceptionModel(exception as ValidationException);
+				code = HttpStatusCode.BadRequest.ToInt32();
+				break;
+			case DataNotFoundException:
+				_errorModel = ErrorModel.Create(exception.GetMessage(), String.Empty, ErrorType.Default);//GetDataNotFoundExceptionModel(exception as DataNotFoundException);
+				code = HttpStatusCode.BadRequest.ToInt32();
+				break;
+			case CustomException:
+				_errorModel = ErrorModel.Create(exception.GetMessage(), String.Empty, ErrorType.Default);//GetCustomExceptionModel(exception as CustomException);
+				code = HttpStatusCode.BadRequest.ToInt32();
+				break;
+			default:
+				_errorModel = ErrorModel.Create(exception.GetMessage(), exception.GetStackTrace(), ErrorType.Default);//GetExceptionModel(exception);
+				break;
+		}
         if (code == HttpStatusCode.InternalServerError.ToInt32())
         {
             SaveLog(exception, feature.Path, GetHttpMethodType(feature.Endpoint.Metadata));
             _errorModel.Message = "Beklenmedik bir hata ile karşılaşıldı..!!";
         }
+        var hostingEnv = HttpContext.RequestServices.GetService<IWebHostEnvironment>();
+        if (hostingEnv.IsProduction())
+        {
+            _errorModel.StackTrace = string.Empty;
+        }
         var response = HttpResponseModel<ErrorModel>.Fail(_errorModel);
         return new JsonActionResult(response, code);
     }
 
-    private ErrorModel GetValidationExceptionModel(ValidationException exception)
-    {
-        return new ErrorModel
-        {
-            Message = exception.GetMessage(),
-            StackTrace = String.Empty,
-            ErrorType = ErrorType.Validation
-        };
-    }
-
-    private ErrorModel GetExceptionModel(Exception exception)
-    {
-        return new ErrorModel
-        {
-            Message = exception.GetMessage(),
-            StackTrace = exception.GetStackTrace(),
-            ErrorType = ErrorType.Default
-        };
-    }
 
     private void SaveLog(Exception exception, string requestPath, string requestType)
     {

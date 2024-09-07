@@ -1,6 +1,6 @@
 using NLayerArchTemplate.WebUI.BuilderServices;
+using NLayerArchTemplate.WebUI.Configuration.BuilderServices;
 using NLayerArchTemplate.WebUI.Configuration.Pipeline;
-using NLayerArchTemplate.WebUI.Helpers;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,10 +14,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.Create(builder.Configuration, isDevelopment, connectionString);
 
 #region SerilogConfig
-SeriLogHelper.Initialize(builder.Configuration);
+SeriLogService.Create(builder.Configuration);
 builder.Host.UseSerilog();
 #endregion
 
 var app = builder.Build();
-app.CreatePipeline();
+app.CreatePipeline(isDevelopment);
 app.Run();

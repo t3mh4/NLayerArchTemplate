@@ -146,22 +146,45 @@ class aufw_datatable {
         $dt: undefined,
         Pk: "Id",
         detailText: "Detaylar",
+        axiosRequest: {
+            controller: undefined,
+            action: undefined,
+            data: undefined
+        },
         dataTable: {
             language: tr,
             select: {
                 style: 'single'
             },
             deferRender: true,
-            dom: 'Qlfrtip',
             //scrollX: true,
             responsive: {
+                //details: {
+                //    display: $.fn.DataTable.Responsive.display.modal({
+                //        header: function (e) {
+                //            return "Detaylar";
+                //        }
+                //    }),
+                //    renderer: DataTable.Responsive.renderer.listHidden()
+                //}
                 details: {
                     display: $.fn.DataTable.Responsive.display.modal({
-                        header: function () {
+                        header: function (e) {
                             return "Detaylar";
                         }
                     }),
-                    renderer: $.fn.DataTable.Responsive.renderer.listHidden()
+                    renderer: function(api, rowIdx, columns) {
+                        var rows = "<ul>";
+                        columns.forEach((col) => {
+                            if (!col.hidden) return;
+                            rows += '<li>' +
+                                '<span style="font-weight:bold">' + col.title + ' : </span>' +
+                                '<span>' + col.data + '</span>' +
+                                '</li>';
+                        });
+                        rows += "<ul/>";
+                        return rows;
+                    }
                 }
             },
             initComplete: (settings, json) => {
@@ -169,11 +192,6 @@ class aufw_datatable {
                 let diff = endTime - this.#startTime;
                 console.cInfo('Table initialization completed in : ' + diff + ' ms');
             },
-        },
-        axiosRequest: {
-            controller: undefined,
-            action: undefined,
-            data: undefined
         }
     };
 
@@ -190,48 +208,6 @@ class aufw_datatable {
         });
     }
 
-    add = async (options) => {
-        let defOptions = {
-            $btn: undefined,
-            title: "Yeni Kayıt",
-            partial: {
-                controller: undefined,
-                action: undefined,
-                data: undefined
-            }
-        }
-        $.extend(true, defOptions, options);
-        let mdl = new aufw_modal();
-        await mdl.show({
-            title: defOptions.title,
-            axiosRequest: defOptions.partial
-        });
-    }
-
-    update = async (options) => {
-        if (options.partial.data < 1) {
-            let msg = new message();
-            msg.warning({ message: "Lütfen Satır Seçiniz..!!" });
-            return;
-        }
-
-        let defOptions = {
-            $btn: undefined,
-            title: "Güncelle",
-            partial: {
-                controller: undefined,
-                action: undefined,
-                data: undefined
-            }
-        }
-        $.extend(true, defOptions, options);
-        let mdl = new aufw_modal();
-        await mdl.show({
-            title: defOptions.title,
-            axiosRequest: defOptions.partial
-        });
-    }
-
     refresh = async () => {
         let axs = new axios_request();
 
@@ -239,8 +215,7 @@ class aufw_datatable {
             this.#dt.clear().rows.add(response.Data).draw();
         });
     }
-
-    get Id() {
+    get id() {
         let data = this.#dt.row({ selected: true }).data();
         if (data === undefined) return 0;
         return data[this.#defOptions.Pk];

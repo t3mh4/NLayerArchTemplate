@@ -1,12 +1,12 @@
-﻿using Serilog;
+﻿using NLayerArchTemplate.Core.Enums;
 using Serilog.Settings.Configuration;
-using NLayerArchTemplate.Core.Enums;
+using Serilog;
 
-namespace NLayerArchTemplate.WebUI.Helpers;
+namespace NLayerArchTemplate.WebUI.Configuration.BuilderServices;
 
-public class SeriLogHelper
+public static class SeriLogService
 {
-    public static void Initialize(IConfiguration configuration)
+    public static void Create(IConfiguration configuration)
     {
         var sectionName = "SerilogFile";
         if (configuration.GetValue<string>("LogType") == nameof(LogTypeEnum.Database))
@@ -17,4 +17,3 @@ public class SeriLogHelper
                .CreateLogger();
     }
 }
-   

@@ -8,7 +8,6 @@ using NLayerArchTemplate.Core.Extensions;
 using NLayerArchTemplate.Core.Helper;
 using NLayerArchTemplate.Core.Models;
 using NLayerArchTemplate.WebUI.Configuration.ActionResults;
-using NLayerArchTemplate.WebUI.Helpers;
 using System.Net;
 
 namespace NLayerArchTemplate.WebUI.Configuration.Filters;

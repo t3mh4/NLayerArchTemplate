@@ -1,14 +1,13 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using NLayerArchTemplate.Core.Extensions;
 
 namespace NLayerArchTemplate.Business.Validators;
 
-public static class Validator<T> where T : new()
+public static class Validator
 {
-    public static void Validate<E>(E entity) where E : new()
+    public static void Validate(ValidationResult result)
     {
-        var validator = (IValidator<E>)Activator.CreateInstance(typeof(T));
-        var result = validator.Validate(entity);
         if (result.IsValid) return;
         throw new ValidationException(result.Errors.Select(s => new { s.PropertyName, s.ErrorMessage }).ToJSON());
     }

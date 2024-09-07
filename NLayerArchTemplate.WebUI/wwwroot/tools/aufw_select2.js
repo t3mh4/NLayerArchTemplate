@@ -39,26 +39,11 @@ class aufw_select2 {
         }
     };
     #$select2;
-    #defOptions = {
-        id: "",
-        selectedValue: null,
-        dataSource: undefined,
-        axios: undefined,
-        select2: {
-            dropdownParent: $('#coreModal'),
-            placeholder: "Seçiniz..",
-            theme: "bootstrap4",
-            allowClear: true,
-            language: this.#tr,
-            escapeMarkup: function (markup) {
-                return markup;
-            }
-        }
-    };
+    #defOptions = undefined;
     #isBinded = false;
     
     load = (options) => {
-        this.#clearOptions();
+        this.#getOptions();
         $.extend(true, this.#defOptions, options);
         this.#$select2 = $("#" + this.#defOptions.id);
         this.#$select2.select2(this.#defOptions.select2).val(this.#defOptions.selectedValue).trigger("change");
@@ -119,14 +104,14 @@ class aufw_select2 {
         });
     }
 
-    #clearOptions() {
+    #getOptions() {
         let defOptions = {
             id: "",
             selectedValue: null,
             dataSource: undefined,
             axios: undefined,
             select2: {
-                dropdownParent: $('#coreModal'),
+                //dropdownParent: $('#coreModal'),
                 placeholder: "Seçiniz..",
                 theme: "bootstrap4",
                 allowClear: true,

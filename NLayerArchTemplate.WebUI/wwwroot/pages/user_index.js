@@ -6,6 +6,7 @@
     let coreAction = "CorE";
     let deleteAction = "Delete";
     let saveAction = "Save";
+    let msg = new message();
     await datatable.load({
         $dt: $("#tblKullanici"),
         axiosRequest: {
@@ -29,11 +30,13 @@
         }
     });
     //------------------------------------------------------
-    let mdl = new aufw_modal();
-    let $btnSave = $('<button type="button" class="btn btn-outline-success">Kaydet</button>');
-    mdl.$footer.prepend($btnSave);
+    let mdl = new aufw_modal({
+        id: "crud",
+        footer: {
+            html: '<button type="button" id="btnSave" name="btnSave" class="btn btn-outline-success">Kaydet</button>',
+        }
+    });
     //------------------------------------------------------
-    // let crud = new aufw_crud();
     $("#btnAdd").click(async () => {
         await mdl.show({
             title: "Yeni Kayıt",
@@ -46,9 +49,8 @@
     });
 
     $("#btnEdit").click(async () => {
-        let id = datatable.Id;
+        let id = datatable.id;
         if (id < 1) {
-            let msg = new message();
             msg.warning({ message: "Lütfen Kayıt Seçiniz..!!" });
             return;
         }
@@ -59,18 +61,13 @@
                 action: coreAction,
                 data: { Data: id }
             }
-        });
-        $("form").on('change paste', 'input, select, textarea', (e) => {
-            let property = e.target.name;//this.name.substring(this.name.lastIndexOf('.') + 1, this.name.length);
-            if (modifiedProperties.indexOf(property) === -1)
-                modifiedProperties.push(property);
+        }, async () => {
+            mdl.$body[0].querySelector("form").handleInputsEventTo(modifiedProperties);
         });
     });
 
     $("#btnDelete").click(async () => {
-        let id = datatable.Id;
-        let msg = new message();
-
+        let id = datatable.id;
         if (id < 1) {
             msg.warning({ message: "Lütfen Kayıt Seçiniz..!!" });
             return;
@@ -90,35 +87,27 @@
                 action: deleteAction,
                 data: { Data: id }
             }, (response) => {
-                if (response.IsSuccess) {
-					msg.success({ message: response.Message });
-					datatable.refresh();
-					}
-					else
-						msg.error({ message: response.Message });
+                msg.success({ message: response.Message });
+                datatable.refresh();
             });
         }
     });
 
-    $btnSave.click(async () => {
+    $("#btnSave").click(async () => {
         let axs = new axios_request();
+        let data = mdl.$body[0].querySelector("form").toObject();
         await axs.post_async({
             controller: controller,
             action: saveAction,
             data: {
-                Data: document.querySelector("form").toObject(),
+                Data: data,
                 ModifiedProperties: modifiedProperties
             }
         }, async (response) => {
             modifiedProperties = [];
             await mdl.hide();
-            let msg = new message();
-			if (response.IsSuccess) {
-				msg.success({ message: response.Message });
-				datatable.refresh();
-			}
-			else
-				msg.error({ message: response.Message });
-					});
-				});
+            msg.success({ message: response.Message });
+            datatable.refresh();
+        });
+    });
 });

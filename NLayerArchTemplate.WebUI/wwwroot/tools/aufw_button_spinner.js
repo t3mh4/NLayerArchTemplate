@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-class aufw_spinner_button {
+class aufw_button_spinner {
 
     #jQbutton = undefined;
 

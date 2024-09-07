@@ -17,6 +17,13 @@ namespace NLayerArchTemplate.WebUI.Controllers;
 
 public class AccountController : BaseController
 {
+    private readonly IServiceProvider _serviceProvider;
+
+    public AccountController(IServiceProvider serviceProvider)
+    {
+        _serviceProvider = serviceProvider;
+    }
+
     [HttpGet]
     [AllowAnonymous]
     public IActionResult Login()
@@ -30,7 +37,7 @@ public class AccountController : BaseController
     [AllowAnonymous]
     public async Task<IActionResult> Login([FromBody] HttpRequestModel<LoginDto> request, CancellationToken cancellationToken)
     {
-        Validator<SignInValidator>.Validate(request.Data);
+        Validator<SignInValidator>.Validate(request.Data, _serviceProvider);
         var userManager = GetManager<IUserManager>();
         var user = await userManager.CheckAuthorization(request.Data, cancellationToken);
         if (user == null)

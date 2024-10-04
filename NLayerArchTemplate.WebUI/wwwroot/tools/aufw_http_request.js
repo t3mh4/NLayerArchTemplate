@@ -1,11 +1,11 @@
 ﻿'use strict';
-
-class axios_request {
+class aufw_http_request {
 
     #errorTypes = {
         Default: 0,
         Validation: 1,
-        HttpRequest: 2
+        HttpRequest: 2,
+        Authorization: 3
     };
 
     #config = {
@@ -82,7 +82,7 @@ class axios_request {
             if (err.response.data.Data)//ErrorController.Handle'dan gelen hataları gösteriyoruz
                 this.#showError(err.response.data);
             else {//Manuel hataları gösteriyoruz
-                let msg = new message();
+                let msg = new aufw_message();
                 msg.error({ message: err.response.data.Message });
             }
             // The client was given an error response (5xx, 4xx)
@@ -91,7 +91,7 @@ class axios_request {
             // The client never received a response, and the request was never left
         } else {
             console.cError(err);
-            let msg = new message();
+            let msg = new aufw_message();
             msg.error({ message: "Beklendik bir hata ile karşılaşıldı..!!" });
             // Anything else
         }
@@ -104,8 +104,11 @@ class axios_request {
         else if (reponseData.Data.ErrorType == this.#errorTypes.HttpRequest) {
             this.#showHttpRequestError(reponseData);
         }
+        else if (reponseData.Data.ErrorType == this.#errorTypes.Authorization) {
+            this.#showAuthorizationError(reponseData);
+        }
         else {
-            let msg = new message();
+            let msg = new aufw_message();
             msg.error({ message: reponseData.Data.Message });
         }
     }
@@ -113,14 +116,22 @@ class axios_request {
     #showValidationErrors(errors) {
         let text = "";
         errors.forEach(function (error, index) {
-            text += error.ErrorMessage + "<br/>"
+            text = text.concat("-&nbsp;&nbsp;" , error.ErrorMessage , "<br/>")
         });
-        let msg = new message();
+        let msg = new aufw_message();
         msg.error({ message: text });
     }
 
     #showHttpRequestError(reponseData) {
-        let msg = new message();
+        let msg = new aufw_message();
         msg.error({ message: reponseData.Data.Message + " (HttpRequest)" });
+    }
+
+    #showAuthorizationError(reponseData) {
+        let msg = new aufw_message();
+        msg.hidden = () => {
+            window.location.href = reponseData.ReturnUrl;
+        }
+        msg.error({ message: reponseData.Message });
     }
 }

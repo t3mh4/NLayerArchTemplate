@@ -28,4 +28,12 @@ public static class StringExtensions
             return default;
         }
     }
+	
+	 public static int[] ToInt32Array(this string value, char separator = ',')
+	 {
+		 return value
+			 .Split(separator)
+			 .Select(int.Parse)
+			 .ToArray();
+	 }
 }

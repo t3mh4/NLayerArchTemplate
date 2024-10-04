@@ -4,6 +4,8 @@ using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.WebUI.Configuration.BuilderServices;
 using NLayerArchTemplate.Business;
 using NLayerArchTemplate.WebUI.Configuration.Converter;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace NLayerArchTemplate.WebUI.BuilderServices;
 
@@ -35,8 +37,6 @@ public static class BuilderService
         //Business katmanında kullanılacak DI'lar içn eklendi.
         services.AddBusinessServices(isDevelopment, connectionString);
 
-        //builder.Services.AddResponseCompressionService(); iptal ettim çünkü güvenlik zafiyeti oluşturabilirmiş.
-
         //Yetkilendirme işlemleri
         services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -56,5 +56,28 @@ public static class BuilderService
             options.SuppressXFrameOptionsHeader = true;
             options.HeaderName = "X-HttpRequest-Token";
         });
+
+        services.AddResponseCompressionService();
+        var maxRequestBodySize = configuration.GetValue<int>("MaxRequestBodySize") * 1024 * 1024;
+
+        services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = maxRequestBodySize;
+        });
+
+        if (isDevelopment)
+        {
+            services.Configure<KestrelServerOptions>(options =>
+            {
+                options.Limits.MaxRequestBodySize = maxRequestBodySize;
+            });
+        }
+        else
+        {
+            services.Configure<IISServerOptions>(options =>
+            {
+                options.MaxRequestBodySize = maxRequestBodySize;
+            });
+        }
     }
 }

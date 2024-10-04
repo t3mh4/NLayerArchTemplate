@@ -11,7 +11,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<TblUser>
     {
         builder.ToTable("User");
         builder.HasKey(x => x.Id);
-        builder.HasAlternateKey(p => p.Username);
         builder.Property(x => x.Username).IsRequired().HasMaxLength(50);
         builder.Property(x => x.Password).IsRequired().HasMaxLength(250);
         builder.Property(x => x.Name).IsRequired().HasMaxLength(75);

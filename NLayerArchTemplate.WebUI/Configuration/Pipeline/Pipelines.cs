@@ -33,7 +33,7 @@ namespace NLayerArchTemplate.WebUI.Configuration.Pipeline;
  */
 public static class Pipeline
 {
-    public static void CreatePipeline(this IApplicationBuilder app, bool isDevelopment
+    public static void CreatePipeline(this IApplicationBuilder app, bool isDevelopment)
     {
         app.UseMiddleware<SecurityHeadersMiddleware>(); 
         if (isDevelopment)

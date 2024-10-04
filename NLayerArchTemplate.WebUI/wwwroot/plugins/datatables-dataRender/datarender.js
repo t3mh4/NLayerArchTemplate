@@ -63,7 +63,7 @@
 	};
 
 	DataTable.render.moment_tr = function (from = 'DD.MM.YYYY HH:mm:ss', to = 'DD.MM.YYYY HH:mm:ss') {
-		
+
 		return function (d, type, row) {
 			if (!d) {
 				return type === 'sort' || type === 'type' ? 0 : d;
@@ -75,14 +75,16 @@
 		};
 	};
 
-	DataTable.render.check_box = function () {
+	DataTable.render.check_box = function (columnName) {
 
 		return function (d, type, row) {
 			let isTrue = false;
-			if (d && (d === true || d === 'true')) {
+			if (d && (d === true || d === 'true' || d === 'True')) {
 				isTrue = true;
 			}
-			return '<input class="checkbox-readonly" type="checkbox" ' + (isTrue ? 'checked' : '') + '>';
+			columnName = columnName || "dt_checkbox";
+			return '<div class="icheck-primary d-inline" style="pointer-events:none;"><input type="checkbox" id="' + columnName + '" name="' + columnName + '" ' + (isTrue ? 'checked' : '') + '><label for="' + columnName + '"></label></div>';
+			//return '<input class="checkbox-readonly" name="' + columnName + '" type="checkbox" ' + (isTrue ? 'checked' : '') + '>';
 		};
 	};
 

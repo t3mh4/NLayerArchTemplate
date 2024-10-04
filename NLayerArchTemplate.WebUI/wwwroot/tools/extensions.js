@@ -18,29 +18,54 @@ Array.prototype.isEmpty = function () {
     return !Array.isArray(this) || !this || this.length === 0;
 }
 
+Error.prototype.callerLine = function (stack) {
+    let urlPattern = /https?:\/\/[^\s)]+/g;
+    let urls = stack.split('\n')
+        .map(line => line.match(urlPattern))  // Her satırda URL arar
+        .filter(match => match !== null)      // Sadece eşleşmeleri al
+        .flat();
+    return urls[1] == undefined ? "-" : urls[1];
+}
+
 console.cError = function (message) {
-    const error = new Error();
-    const callerLine = error.stack.split('\n')[2].trim();
-    console.log(`%c${message} (${callerLine})`,'background-color: white; color: red; font-style: italic;');
+    let error = new Error();
+    console.log(`%cError : ${message}\nLine : (${error.callerLine(error.stack) })`,'background-color: white; color: red; font-style: italic;');
 };
 
 console.cInfo = function (message) {
-    const error = new Error();
-    const callerLine = error.stack.split('\n')[2].trim();
-    console.log(`%c${message} (${callerLine})`, 'background-color: white; color: green; font-style: italic;');
+    let error = new Error
+    console.log(`%c\nMessage : ${message}\nLine : (${error.callerLine(error.stack)})`, 'background-color: white; color: green; font-style: italic;');
 };
 
 HTMLFormElement.prototype.toObject = function () {
     let formData = new FormData(this);
     let data = Object.fromEntries(formData);
-    var numberInputs = this.querySelectorAll("input[data-input-type='number']");
-    for (var i = 0; i < numberInputs.length; i++) {
-        let datax = data[numberInputs[i].name];
-        data[numberInputs[i].name] = datax ? datax.replaceAll('.', '') : "0";
+    for (let numberInput of this.querySelectorAll("input[data-input-type='number']")) {
+        let datax = data[numberInput.name];
+        data[numberInput.name] = datax ? datax.replaceAll('.', '') : "0";
     }
-    var selects = this.querySelectorAll("select[data-input-type='multiple-select']");
-    for (var i = 0; i < selects.length; i++) {
-        data[selects[i].name] = $(selects[i]).val().toString();
+
+    for (let select of this.querySelectorAll("select[data-input-type='multiple-select']")) {
+        //Spread syntax allows an iterable (...) to be expanded
+        let textList = [...select.selectedOptions].map(function (option) {
+            return option.text;
+        });
+        data[select.name] = $(select).val().toString();
+        let textName = select.getAttribute("data-text-property")
+        data[textName] = textList.join();
+    }
+
+    for (let treeview of this.querySelectorAll("div[data-input-type='treeview']")) {
+        let nodes = $(treeview).jstree(true).get_selected(true).filter(f => !f.id.startsWith('j'));
+        let ids = nodes.map(function (node) {
+            return node.id;
+        });
+        let textList = nodes.map(function (node) {
+            return node.text;
+        });
+        data.MahalleIds = ids.join();
+        let textName = treeview.getAttribute("data-text-property")
+        data[textName] = textList.join();
     }
     return data;
 };

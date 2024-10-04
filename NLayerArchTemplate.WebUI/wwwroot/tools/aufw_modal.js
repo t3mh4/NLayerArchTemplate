@@ -2,19 +2,25 @@
 class aufw_modal {
 
     #$mdl = undefined;
-    #$spinner = undefined;
+    #spinner = undefined;
+    #modalId = undefined;
     constructor(settings) {
         let defSettings = {
             id: "",
-            width: "600px",
+            width: "85vh",
+            isBackdropStatic: true,
+            isKeyboard: true,
             footer: {
                 html: "",
                 btnCancel: "İptal"
             }
         };
         $.extend(true, defSettings, settings);
-        let modalHtml = '<div class="modal fade" id="coreModal-' + defSettings.id + '" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="true"> \
-                        <div class="modal-dialog" style="max-width:'+ defSettings.width + '">\
+        let backdrop = defSettings.isBackdropStatic ? "data-backdrop=\"static\"" : "";
+        let keyboard = defSettings.isKeyboard ? "data-keyboard=\"true\"" : "";
+        this.#modalId = defSettings.id;
+        let modalHtml = `<div class="modal fade" id="coreModal-${defSettings.id}" tabindex="-1" role="dialog" ${backdrop} ${keyboard}> \
+                        <div class="modal-dialog" style="max-width:${defSettings.width}">\
                             <div class="modal-content">\
                                 <div class="modal-header">\
                                     <h5 class="modal-title">-</h5>\
@@ -23,29 +29,27 @@ class aufw_modal {
                                     </button>\
                                 </div>\
                                 <div class="modal-body">\
-                                    <input type="hidden" id="modal-data"/>\
-                                    <div style="overflow-y:hidden;height:calc(100vh - 15rem);">\
-                                        <div class="px-2" style="height:100%;" id="modal-inner-body">\
-                                        </div>\
-                                        <div class="loader-container">\
-                                            <div class="loader"></div>\
+                                    <input type="hidden" id="modal-data-${defSettings.id}"/>\
+                                    <div style="height:calc(100vh - 15rem);" id="xx">\
+                                        <div class="px-2" style="height:100%;overflow-y:hidden" id="modal-inner-body-${defSettings.id}">\
                                         </div>\
                                     </div>\
                                 </div>\
                                 <div class="modal-footer">\
-                                    '+ defSettings.footer.html + '\
-                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">'+ defSettings.footer.btnCancel + '</button>\
+                                    ${defSettings.footer.html}\
+                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">${defSettings.footer.btnCancel}</button>\
                                 </div>\
                             </div>\
                         </div>\
-                    </div>'
+                    </div>`;
         this.#$mdl = $(modalHtml);
+        this.#spinner = new aufw_spinner();
+        this.#$mdl.find(".modal-body").append(this.#spinner.html);
         document.body.appendChild(this.#$mdl[0]);
-        this.#$spinner = this.#$mdl.find(".loader-container");
         this.#$mdl.on('hide.bs.modal', this.#hidden);
     }
 
-    show = async (options, callback) => {
+    show = (options, callback) => {
         let defOptions = {
             title: "",
             html: "",
@@ -66,13 +70,15 @@ class aufw_modal {
                     html = defOptions.html;
                 }
                 else {
-                    let axs = new axios_request();
+                    let axs = new aufw_http_request();
                     await axs.post_async(options.axiosRequest, (response) => {
                         html = response;
                     });
                 }
                 this.#hideSpinner();
-                if (!html) return;
+                if (!html) {
+                    return;
+                }
                 this.$body.html(html);
                 if (callback && typeof (callback) == "function") {
                     await callback();
@@ -85,11 +91,11 @@ class aufw_modal {
         }, 500);
     }
 
-    hide = async () => {
+    hide = () => {
         this.#$mdl.modal('hide');
     }
 
-    #hidden = async () => {
+    #hidden = () => {
         this.#clear();
     }
 
@@ -98,23 +104,24 @@ class aufw_modal {
     }
 
     get $body() {
-        return this.#$mdl.find(".px-2");
+        return this.#$mdl.find(`#modal-inner-body-${this.#modalId}`);
     }
 
     set data(val) {
-        let data = document.getElementById("modal-data");
-        data.value = val;
+        this.#$mdl.find(`#modal-data-${this.#modalId}`).val(val);
     }
 
-    #showSpinner() {
-        this.#$spinner.show();
+    #showSpinner = () => {
+        this.#spinner.show();
+        //this.#$mdl.find(".loader-container").show();
     }
 
-    #hideSpinner() {
-        this.#$spinner.hide();
+    #hideSpinner = () => {
+        this.#spinner.hide();
+        //this.#$mdl.find(".loader-container").hide();
     }
 
-    #clear() {
+    #clear = () => {
         this.$body.empty();
     }
 }

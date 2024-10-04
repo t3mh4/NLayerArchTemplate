@@ -19,13 +19,27 @@
 <script src="~/plugins/jquery-mask/jquery.mask.js"></script>
 <!--File Saver v2.0.5-->
 <script src="~/plugins/filesaver/filesaver.min.js"></script>
+<!--Browser Image Compression v2.0.2-->
+<script src="~/plugins/browser-image-compression/browser-image-compression.js"></script>
+<!-- jsTree JS -->
+<script src="~/plugins/jstree/jstree.min.js"></script>
 
 <environment names="Development,Production">
-    <script asp-append-version="true" src="~/tools/message.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_message.js"></script>
     <script asp-append-version="true" src="~/tools/extensions.js"></script>
     <script asp-append-version="true" src="~/tools/aufw.js"></script>
     <script asp-append-version="true" src="~/tools/aufw_datatable.js"></script>
     <script asp-append-version="true" src="~/tools/aufw_modal.js"></script>
-    <script asp-append-version="true" src="~/tools/axios_request.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_http_request.js"></script>
     <script asp-append-version="true" src="~/tools/aufw_button_spinner.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_select2.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_loading/aufw_loading.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_jstree.js"></script>
+    <script asp-append-version="true" src="~/tools/aufw_spinner/aufw_spinner.js"></script>
 </environment>
+
+<script>
+    aufw(() => {
+        aufw.init();
+    });
+</script>

@@ -7,13 +7,13 @@ aufw(() => {
 
     sb.click_event = async () => {
         let data = document.querySelector("form").toObject();
-        let axs = new axios_request();
-        await axs.post_async({
+        let req = new aufw_http_request();
+        await req.post_async({
             controller: "Account",
             action: "Login",
             data: { Data: data } 
         }, (response) => {
-            let msg = new message();
+            let msg = new aufw_message();
             if (response.IsSuccess) {
                 msg.hidden = () => {
                     window.location.href = "/Home";

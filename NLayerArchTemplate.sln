@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLayerArchTemplate.Entities
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLayerArchTemplate.DataAccess", "NLayerArchTemplate.DataAccess\NLayerArchTemplate.DataAccess.csproj", "{CA6C7750-2366-4A26-93D7-44CAC48E9F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLayerArchTemplate.Business", "NLayerArchTemplate.Business\NLayerArchTemplate.Business.csproj", "{CF256482-E12C-436E-A9A5-7A696385AC7A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLayerArchTemplate.Business", "NLayerArchTemplate.Business\NLayerArchTemplate.Business.csproj", "{CF256482-E12C-436E-A9A5-7A696385AC7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLayerArchTemplate.WebUI", "NLayerArchTemplate.WebUI\NLayerArchTemplate.WebUI.csproj", "{86DC4708-4485-43B2-A8CF-C01BFD96DA90}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLayerArchTemplate.WebUI", "NLayerArchTemplate.WebUI\NLayerArchTemplate.WebUI.csproj", "{86DC4708-4485-43B2-A8CF-C01BFD96DA90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLayerArchTemplate.CrudTemplate", "NLayerArchTemplate.CrudTemplate\NLayerArchTemplate.CrudTemplate.csproj", "{3761E3AA-7F36-4AC6-9B86-E1BB2B1149AE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{86DC4708-4485-43B2-A8CF-C01BFD96DA90}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86DC4708-4485-43B2-A8CF-C01BFD96DA90}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86DC4708-4485-43B2-A8CF-C01BFD96DA90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3761E3AA-7F36-4AC6-9B86-E1BB2B1149AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3761E3AA-7F36-4AC6-9B86-E1BB2B1149AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3761E3AA-7F36-4AC6-9B86-E1BB2B1149AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3761E3AA-7F36-4AC6-9B86-E1BB2B1149AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

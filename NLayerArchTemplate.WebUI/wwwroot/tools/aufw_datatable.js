@@ -1,5 +1,6 @@
 ﻿'use strict';
 
+
 var tr = {
     "emptyTable": "Tabloda herhangi bir veri mevcut değil",
     "info": "_TOTAL_ kayıttan _START_ - _END_ arasındaki kayıtlar gösteriliyor",
@@ -157,6 +158,8 @@ class aufw_datatable {
                 style: 'single'
             },
             deferRender: true,
+            //scrollY: '45vh',
+            //scrollCollapse: true,
             //scrollX: true,
             responsive: {
                 //details: {
@@ -173,7 +176,7 @@ class aufw_datatable {
                             return "Detaylar";
                         }
                     }),
-                    renderer: function(api, rowIdx, columns) {
+                    renderer: function (api, rowIdx, columns) {
                         var rows = "<ul>";
                         columns.forEach((col) => {
                             if (!col.hidden) return;
@@ -187,38 +190,62 @@ class aufw_datatable {
                     }
                 }
             },
-            initComplete: (settings, json) => {
-                let endTime = new Date().getTime();
-                let diff = endTime - this.#startTime;
-                console.cInfo('Table initialization completed in : ' + diff + ' ms');
-            },
+            initComplete: undefined,
         }
     };
 
+    constructor() {
+        this.#defOptions.dataTable.initComplete = this.#initComplete;
+    }
+
     load = async (options) => {
-
+        aufw.loading.show("Veriler yükleniyor, lütfen bekleyiniz... ");
         this.#startTime = new Date().getTime();
-
         $.extend(true, this.#defOptions, options);
-
-        let axs = new axios_request();
+        let axs = new aufw_http_request();
         await axs.post_async(this.#defOptions.axiosRequest, response => {
             this.#defOptions.dataTable.data = response.Data;
-            this.#dt = this.#defOptions.$dt.DataTable(this.#defOptions.dataTable).columns.adjust();
         });
+        this.#dt = this.#defOptions.$dt.DataTable(this.#defOptions.dataTable).columns.adjust();
     }
 
     refresh = async () => {
-        let axs = new axios_request();
-
+        let axs = new aufw_http_request();
         await axs.post_async(this.#defOptions.axiosRequest, response => {
             this.#dt.clear().rows.add(response.Data).draw();
         });
     }
+
+    #initComplete = (settings, json) => {
+        let endTime = new Date().getTime();
+        let diff = endTime - this.#startTime;
+        let jsonString = JSON.stringify(this.#defOptions.dataTable.data);
+        console.cInfo(`${parseInt((new Blob([jsonString]).size) / 1024)} kb data loaded in ${diff} ms with table`)
+        aufw.loading.hide();
+    }
+
     get id() {
         let data = this.#dt.row({ selected: true }).data();
         if (data === undefined) return 0;
         return data[this.#defOptions.Pk];
+    }
+
+    set dataSource(data) {
+        this.#dt.clear().rows.add(data).draw();
+    }
+
+    //clearFilter() {
+    //    this.#dt.search('').draw();
+    //}
+
+    //search(filter) {
+    //    this.#dt.column(3).search('BAKLAN').column(2).search('Kiralık').draw();
+    //    this.#dt.column(3).search(filter, true, false).draw();
+    //    this.#dt.column(3).search('BAKLAN|BABADAĞ', true, false).draw();
+    //}
+
+    get dt() {
+        return this.#dt;
     }
 }
 

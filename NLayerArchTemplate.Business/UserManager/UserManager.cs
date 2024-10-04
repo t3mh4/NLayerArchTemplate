@@ -91,7 +91,6 @@ public class UserManager : ABaseManager, IUserManager
     {
         var user = await _userService.GetAsync(g => g.Id == userId, ct).ConfigureAwait(false);
         if (user == null) throw new DataNotFoundException();
-		if (user.Id == UserEnum.Admin.ToInt32()) throw new CustomException("Admin kullanıcısı silinemez..!!");
         await _userService.DeleteAsync(user, ct).ConfigureAwait(false);
         await _uow.SaveAsync(ct).ConfigureAwait(false);
     }

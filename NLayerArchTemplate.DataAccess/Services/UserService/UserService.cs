@@ -4,6 +4,8 @@ using NLayerArchTemplate.DataAccess.Repositories;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
 using NLayerArchTemplate.DataAccess.Services.UserService;
+using NLayerArchTemplate.Core.Enums;
+using NLayerArchTemplate.Core.Extensions;
 
 namespace NLayerArchTemplate.DataAccess.Services.UserService;
 
@@ -39,7 +41,7 @@ public class UserService : Repository<TblUser>, IUserService
                   Password = s.Password,
                   Name = s.Name,
                   Surname = s.Surname,
-                  Email=s.Email,
+                  Email = s.Email,
                   IsActive = s.IsActive,
                   IsDeleted = s.IsDeleted
               });
@@ -48,16 +50,17 @@ public class UserService : Repository<TblUser>, IUserService
 
     public async Task<List<UserListItemDto>> GetUserList(CancellationToken ct)
     {
-        var query = _dbContext.Users
-              .Select(s => new UserListItemDto
-              {
-                  Id = s.Id,
-                  Username = s.Username,
-                  Name = s.Name,
-                  Surname = s.Surname,
-                  Email = s.Email,
-                  IsActive = s.IsActive
-              });
+        var adminId = UserEnum.Admin.ToInt32();
+        var query = _dbContext.Users.Where(w => w.Id != adminId)
+            .Select(s => new UserListItemDto
+            {
+                Id = s.Id,
+                Username = s.Username,
+                Name = s.Name,
+                Surname = s.Surname,
+                Email = s.Email,
+                IsActive = s.IsActive
+            });
         return await query.ToListAsync(ct).ConfigureAwait(false);
     }
 }

@@ -1,6 +1,6 @@
 ﻿'use strict';
 
-class message {
+class aufw_message {
 
     #toastrType = {
         Error: 'error',

@@ -41,32 +41,37 @@ class aufw_select2 {
     #$select2;
     #defOptions = undefined;
     #isBinded = false;
-    
+    #$parent = undefined
+    constructor(options) {
+        if (options) {
+            this.#$parent = options.$parent;
+        }
+    }
+
     load = (options) => {
-        this.#getOptions();
-        $.extend(true, this.#defOptions, options);
+        this.#setOptions(options);
         this.#$select2 = $("#" + this.#defOptions.id);
-        this.#$select2.select2(this.#defOptions.select2).val(this.#defOptions.selectedValue).trigger("change");
+        this.#defOptions.select2.dropdownParent = this.#$parent;
         this.#$select2.on("select2:select", this.#selected);
         this.#$select2.on("select2:unselecting", this.#unselected);
         this.#$select2.options = this.#defOptions;
         if (this.#defOptions.dataSource) {
-            this.#dataSource = this.#defOptions.dataSource;
+            this.#setDataSource(this.#defOptions.dataSource);
         }
         else if (this.#defOptions.axios) {
             this.#setDataSourceFromAxios(this.#defOptions.axios);
         }
+        this.#$select2.select2(this.#defOptions.select2).val(this.#defOptions.selectedValue).trigger("change");
     }
 
     #selected = (e) => {
-        let selectedValue = e.params.data.id;
-        if (selectedValue == null) { alert(""); }
         if (this.#isBinded) {
             let childSelect2Options = this.#$select2.child.options;
             if (childSelect2Options.dataSource) {
-                this.#dataSource = childSelect2Options.dataSource;
+                this.#setDataSource(childSelect2Options.dataSource);
             }
             else if (childSelect2Options.axios) {
+                let selectedValue = e.params.data.id;
                 childSelect2Options.axios.data = { Data: selectedValue };
                 this.#setDataSourceFromAxios(childSelect2Options.axios);
             }
@@ -82,36 +87,44 @@ class aufw_select2 {
         }
     }
 
-    set #dataSource(data) {
+    #setDataSource(data) {
         let select = this.#isBinded ? this.#$select2.child : this.#$select2;
         select.empty();
-        for (var i = 0; i < data.length; i++) {
-            select.append('<option value="' + data[i].Id + '">' + data[i].Name + '</option>');
+        if (this.#defOptions.isGroupedItems) {
+            for (let i = 0; i < data.length; i++) {
+                let group = data[i];
+                let optgroup = $('<optgroup>').attr('label', group.GroupName).attr('data-group-id', group.GroupId);
+                this.#createItems(optgroup, group.Items)
+                select.append(optgroup);
+            }
+        }
+        else {
+            this.#createItems(select, data);
         }
         select.val(this.#defOptions.selectedValue).trigger("change");
     }
 
     #setDataSourceFromAxios(axios) {
-        let axs = new axios_request();
+        let axs = new aufw_http_request();
         axs.post(axios, (response) => {
             if (response.IsSuccess) {
-                this.#dataSource = response.Data;
+                this.#setDataSource(response.Data);
             }
             else {
-                let msg = new message();
+                let msg = new aufw_message();
                 msg.error({ message: response.Message });
             }
         });
     }
 
-    #getOptions() {
-        let defOptions = {
+    #setOptions(options) {
+        this.#defOptions = {
             id: "",
             selectedValue: null,
             dataSource: undefined,
             axios: undefined,
+            isGroupedItems: false,
             select2: {
-                //dropdownParent: $('#coreModal'),
                 placeholder: "Seçiniz..",
                 theme: "bootstrap4",
                 allowClear: true,
@@ -121,8 +134,8 @@ class aufw_select2 {
                 }
             }
         };
-        this.#defOptions = defOptions;
         this.#isBinded = false;
+        $.extend(true, this.#defOptions, options);
     }
 
     bind = (options) => {
@@ -139,7 +152,15 @@ class aufw_select2 {
     set value(value) {
         this.#$select2.val(value).trigger("change");
     }
+
     get value() {
-        return this.#$select2.val(value);
+        return this.#$select2.val();
+    }
+
+    #createItems(parent, items) {
+        for (let i = 0; i < items.length; i++) {
+            let option = $('<option>').val(items[i].Id).text(items[i].Name);
+            parent.append(option);
+        }
     }
 }

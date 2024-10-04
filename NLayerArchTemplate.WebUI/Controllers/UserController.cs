@@ -21,6 +21,7 @@ public class UserController : BaseController
         _userManager = userManager;
     }
 
+    [Route("User")]
     [HttpGet]
     public IActionResult Index()
     {
@@ -39,7 +40,7 @@ public class UserController : BaseController
     [HttpPost]
     public async Task<IActionResult> CorE([FromBody] HttpRequestModel<int> httpRequest, CancellationToken ct)
     {
-        Validator<UserCoreValidator>.Validate(httpRequest.Data, _serviceProvider);
+        Validator<UserIdValidator>.Validate(httpRequest.Data, _serviceProvider);
         var user = await _userManager.GetByUserId(httpRequest.Data, ct);
         return PartialView(user);
     }
@@ -57,14 +58,15 @@ public class UserController : BaseController
     [HttpPost]
     public async Task<IActionResult> Delete([FromBody] HttpRequestModel<int> httpRequest, CancellationToken ct)
     {
-			if (httpRequest.Data.ToString() == UserHelper.GetUserId(HttpContext))
-			{
-				var responsex = HttpResponseModel.Fail("Şuan kullandığınız kullanıcı silinemez..!!");
-				 return new JsonActionResult(responsex);
-			}
+        HttpResponseModel response;
         Validator<UserDeleteValidator>.Validate(httpRequest.Data, _serviceProvider);
+        if (httpRequest.Data.ToString() == UserHelper.GetUserId(HttpContext))
+        {
+            response = HttpResponseModel.Fail("Şuan bu kullanıcı ile giriş yaptığınız için silinemez..!!");
+            return new JsonActionResult(response);
+        }
         await _userManager.Delete(httpRequest.Data, ct);
-        var response = HttpResponseModel.Success(SuccessCrudMessages.Delete);
+        response = HttpResponseModel.Success(SuccessCrudMessages.Delete);
         return new JsonActionResult(response);
     }
 }

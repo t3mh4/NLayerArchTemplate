@@ -21,7 +21,6 @@ public class SecurityHeadersMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (!await IsRequestValid(context)) return;
         if (_environment.IsProduction())
         {
             context.Response.Headers["Server"] = string.Empty;
@@ -52,28 +51,5 @@ public class SecurityHeadersMiddleware
                 "frame-ancestors 'self';";
         }
         await _next.Invoke(context);
-    }
-
-    private async Task<bool> IsRequestValid(HttpContext context)
-    {
-        if (context.Request.Headers.TryGetValue(KeyValues.XRequestedWith, out StringValues keyx)
-            && context.Request.Headers.TryGetValue("x-httpRequest-type", out StringValues key))
-        {
-            if ((keyx.Equals("POST") || keyx.Equals("GET"))
-                && !key.Equals("Axios"))
-            {
-                context.Response.ContentType = KeyValues.JsonContentType;
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
-                var errorModel = new ErrorModel
-                {
-                    Message = ErrorMessages.HataliIslem,
-                    ErrorType = ErrorType.HttpRequest
-                };
-                var response = HttpResponseModel<ErrorModel>.Fail(errorModel);
-                await context.Response.WriteAsync(response.ToJSON());
-                return false;
-            }
-        }
-        return true;
     }
 }

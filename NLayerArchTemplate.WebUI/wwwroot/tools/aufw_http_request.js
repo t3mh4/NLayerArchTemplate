@@ -10,7 +10,6 @@ class aufw_http_request {
 
     #config = {
         headers: {
-            "X-HttpRequest-Type": "Axios",
             "X-HttpRequest-Token": "",
             "X-Requested-With":"",
             "Accept": "application/json",
@@ -92,7 +91,7 @@ class aufw_http_request {
         } else {
             console.cError(err);
             let msg = new aufw_message();
-            msg.error({ message: "Beklendik bir hata ile karşılaşıldı..!!" });
+            msg.error({ message: "Beklenmedik bir hata ile karşılaşıldı..!!-3" });
             // Anything else
         }
     }

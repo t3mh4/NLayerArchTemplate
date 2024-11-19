@@ -26,10 +26,10 @@ public class AccountController : BaseController
 
     [HttpGet]
     [AllowAnonymous]
-    public IActionResult Login()
+    public IActionResult Login([FromQuery] string returnUrl)
     {
         if (HttpContext.User.Identity.IsAuthenticated)
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("", string.IsNullOrWhiteSpace(returnUrl) ? "Home" : returnUrl);
         return View();
     }
 
@@ -42,7 +42,7 @@ public class AccountController : BaseController
         var user = await userManager.CheckAuthorization(request.Data, cancellationToken);
         if (user == null)
         {
-            return new JsonActionResult(HttpResponseModel.Fail(AccountMessages.CheckAuthorizationFail), HttpStatusCode.InternalServerError.ToInt32());
+            return new JsonActionResult(HttpResponseModel.Fail(AccountMessages.CheckAuthorizationFail));
         }
         var claims = new List<Claim>
         {

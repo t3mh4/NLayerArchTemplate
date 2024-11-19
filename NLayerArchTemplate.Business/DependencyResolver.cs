@@ -20,7 +20,8 @@ public static class DependencyResolver
         {
             options.UseMySql(connectionString,
                              ServerVersion.AutoDetect(connectionString),
-                             x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery));
+                             x => x.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
+            .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             if (isDevelopment)
             {
                 options.EnableDetailedErrors();

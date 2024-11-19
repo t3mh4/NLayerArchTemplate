@@ -1,18 +1,27 @@
 ﻿'use strict';
 
 aufw(async () => {
+    aufw.init();
 
     moment.locale("tr");
 
-    let req = new aufw_http_request();
+    let axs = new aufw_http_request();
 
     $("#btnLogout").click(async (e) => {
         e.preventDefault();
-        await req.post_async({
+        await axs.post_async({
             controller: "Account",
             action: "Logout",
         }, (response) => {
-            window.location.href = response.ReturnUrl;
+            let msg = new aufw_message();
+            if (response.IsSuccess) {
+                msg.hidden = () => {
+                    window.location.href = response.ReturnUrl;
+                }
+                msg.success({ message: response.Message, timeOut: 2000 });
+            }
+            else
+                msg.error({ message: response.Message, timeOut: 2000 });
         });
     });
 });

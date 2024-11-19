@@ -39,6 +39,7 @@
     //------------------------------------------------------
     $("#btnAdd").click(() => {
         mdl.show({
+            numOfInputs: 6,
             title: "Yeni Kayıt",
             axiosRequest: {
                 controller: controller,
@@ -55,6 +56,7 @@
             return;
         }
         mdl.show({
+            numOfInputs: 6,
             title: "Güncelle",
             axiosRequest: {
                 controller: controller,

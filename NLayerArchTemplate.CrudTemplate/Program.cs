@@ -1,4 +1,5 @@
 ﻿using NLayerArchTemplate.CrudTemplate;
+using System.Text;
 
 Message.Info("Crud işlemleri için hazırlanacak template ayarlarına başlıyoruz..");
 Console.WriteLine();
@@ -7,9 +8,6 @@ var projectName = Console.ReadLine();
 
 Message.Info("Lütfen tablo adı giriniz: ", false);
 var tableName = Console.ReadLine();
-
-Message.Info("Lütfen tablo property'lerini giriniz: ", false);
-var properties = Console.ReadLine();
 
 if (string.IsNullOrWhiteSpace(projectName) || string.IsNullOrWhiteSpace(tableName))
 {
@@ -22,7 +20,7 @@ var rootDirectoryFullPath = Directory.GetCurrentDirectory();
 var sourceRootDirectoryFullPath = @"D:\CrudTemplate";
 var sourceRootDirectory = new DirectoryInfo(sourceRootDirectoryFullPath);
 //kopyalanacak klasör oluşturuluyor
-var targetRootDirectory = new DirectoryInfo(Path.Combine(@"D:\Test", projectName));
+var targetRootDirectory = new DirectoryInfo(Path.Combine(@"D:\CrudTemplate - " + projectName + " - " + tableName, projectName));
 var targetRootDirectoryFullPath = targetRootDirectory.FullName;
 //template klasörü kopyalanıyor
 CopyAllFiles(sourceRootDirectory, targetRootDirectory, projectName, tableName);
@@ -71,7 +69,10 @@ void CopyAllFiles(DirectoryInfo source, DirectoryInfo target,string projectName,
         else if (fileName.Contains("TableName"))
             fileName = fileName.Replace("TableName", tableName);
         Console.WriteLine(@"Copying {0}\{1}", target.FullName, fi.Name);
-        fi.CopyTo(Path.Combine(target.FullName, fileName), true);
+        var targetPath = Path.Combine(target.FullName, fileName);
+        fi.CopyTo(targetPath, true);
+        string content = File.ReadAllText(targetPath, Encoding.UTF8);
+        File.WriteAllText(targetPath, content, new UTF8Encoding(false));
     }
     foreach (DirectoryInfo diSourceSubDir in source.GetDirectories())
     {

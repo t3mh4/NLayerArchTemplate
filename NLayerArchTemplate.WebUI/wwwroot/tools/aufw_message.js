@@ -28,7 +28,7 @@ class aufw_message {
     };
 
     error = (options) => {
-        let { title = 'Hata', message = "Beklenmedik bir hata ile karşılaşıldı", position = this.Position.TopCenter, timeOut = 3000 } = options || {};
+        let { title = 'Hata', message = "Beklenmedik bir hata ile karşılaşıldı-1", position = this.Position.TopCenter, timeOut = 3000 } = options || {};
         this.#show(title, message, this.#toastrType.Error, position, timeOut);
     };
 

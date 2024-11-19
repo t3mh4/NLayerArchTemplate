@@ -8,6 +8,7 @@ class aufw_modal {
         let defSettings = {
             id: "",
             width: "85vh",
+            isHeightStatic: true,
             isBackdropStatic: true,
             isKeyboard: true,
             footer: {
@@ -30,7 +31,7 @@ class aufw_modal {
                                 </div>\
                                 <div class="modal-body">\
                                     <input type="hidden" id="modal-data-${defSettings.id}"/>\
-                                    <div style="height:calc(100vh - 15rem);" id="xx">\
+                                    <div id="modal-outer-body-${defSettings.id}" style="height:calc(100vh - 15rem);">\
                                         <div class="px-2" style="height:100%;overflow-y:hidden" id="modal-inner-body-${defSettings.id}">\
                                         </div>\
                                     </div>\
@@ -53,14 +54,19 @@ class aufw_modal {
         let defOptions = {
             title: "",
             html: "",
+            isFlexible: true,
             axiosRequest: {
                 controller: undefined,
                 action: undefined,
                 data: undefined
             }
         };
-        this.#showSpinner();
         $.extend(true, defOptions, options);
+        let modal_body = this.#$mdl.find(`#modal-outer-body-${this.#modalId}`);
+        if (defOptions.isFlexible) {
+            modal_body.css("height", "100px");
+        }
+        this.#showSpinner();
         this.#$mdl.find(".modal-title").text(defOptions.title);
         let html = "";
         this.#$mdl.modal('show');
@@ -75,8 +81,8 @@ class aufw_modal {
                         html = response;
                     });
                 }
-                this.#hideSpinner();
                 if (!html) {
+                    this.#hideSpinner();
                     return;
                 }
                 this.$body.html(html);
@@ -85,8 +91,11 @@ class aufw_modal {
                 }
             }
             catch (error) {
-                this.#hideSpinner();
                 console.cError(error);
+            }
+            this.#hideSpinner();
+            if (defOptions.isFlexible) {
+                modal_body.css("height", "");
             }
         }, 500);
     }

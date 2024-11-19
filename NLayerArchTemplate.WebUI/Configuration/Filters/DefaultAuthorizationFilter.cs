@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Net.Http.Headers;
 using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.ConstantMessages;
 using NLayerArchTemplate.Core.Enums;
@@ -21,15 +22,14 @@ public sealed class DefaultAuthorizationFilter : IAuthorizationFilter
         //client side'dan gelen http requestler axios ile yapılıp yapılmadığı kontrol ediliyor.
         var queryString = httpContextRequest.QueryString.ToString();
         var path = httpContextRequest.Path.Value;
-        var returnUrl = string.Concat("?ReturnUrl=", path, queryString);
-        var xRequest = httpContextRequest.Headers[KeyValues.XRequestedWith].ToString();
-        if (string.IsNullOrWhiteSpace(xRequest))
+        var returnUrl = string.Concat(AccountUrlKeys.Login, "?ReturnUrl=", path, queryString);
+        if (httpContextRequest.Headers.XRequestedWith.Count == 0)
         {
-            var redirectResult = new RedirectResult(AccountUrlKeys.Login + returnUrl);
+            var redirectResult = new RedirectResult(returnUrl);
             context.Result = redirectResult;
             return;
         }
-        context.Result = new JsonActionResult(GetUnAuthorizationRespose(), HttpStatusCode.BadRequest.ToInt32());
+        context.Result = new JsonActionResult(GetUnAuthorizationRespose(returnUrl), HttpStatusCode.Unauthorized.ToInt32());
     }
 
     private HttpResponseModel<ErrorModel> GetUnAuthorizationRespose(string returnUrl = AccountUrlKeys.Login)

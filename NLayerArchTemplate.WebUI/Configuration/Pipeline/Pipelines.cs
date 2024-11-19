@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using NLayerArchTemplate.Core.ConstantKeys;
 using NLayerArchTemplate.Core.ConstantMessages;
@@ -69,25 +70,29 @@ public static class Pipeline
         app.UseHealthChecks("/health");
 	    app.UseStatusCodePages(context =>
 		{
-			var request = context.HttpContext.Request;
-			var response = context.HttpContext.Response;
-			var originalPath = request.Path;
-			var originalQueryString = request.QueryString;
-			var redirectUrl = $"/Error/{response.StatusCode}?originalPath={originalPath}&originalQueryString={originalQueryString}";
-			if (request.Headers.Any(a => a.Key == KeyValues.XRequestedWith))
-			{
-				var errorModel = new ErrorModel
-				{
-					Message = ErrorMessages.HataliIslem,
-				};
-				response.ContentType = KeyValues.JsonContentType;
-				var responseModel = HttpResponseModel<ErrorModel>.Fail(errorModel);
-				response.WriteAsync(responseModel.ToJSON()).Wait();
-				return Task.CompletedTask;
-			}
-			response.Redirect(redirectUrl);
-			return Task.CompletedTask;
-		});
+            var request = context.HttpContext.Request;
+            var response = context.HttpContext.Response;
+            var originalPath = request.Path;
+            var originalQueryString = request.QueryString;
+            if (request.Headers.XRequestedWith.Count > 0)
+            {
+                var errorModel = new ErrorModel
+                {
+                    Message = $"{originalPath}{Environment.NewLine}{ErrorMessages.UrlBulunamadi}",
+                };
+                if (response.StatusCode != StatusCodes.Status404NotFound)
+                {
+                    errorModel.Message = ErrorMessages.HataliIslem;
+                }
+                response.ContentType = KeyValues.JsonContentType;
+                var responseModel = HttpResponseModel<ErrorModel>.Fail(errorModel);
+                response.WriteAsync(responseModel.ToJSON()).Wait();
+                return Task.CompletedTask;
+            }
+            var redirectUrl = $"/Error/{response.StatusCode}?path={originalPath}&queryString={originalQueryString}";
+            response.Redirect(redirectUrl);
+            return Task.CompletedTask;
+        });
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(

@@ -35,7 +35,6 @@ public class ApplicationDbContext : DbContext
     {
         ChangeTracker.LazyLoadingEnabled = false;
         ChangeTracker.AutoDetectChangesEnabled = false;
-        ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
         _serviceprovider = serviceProvider;
     }
 
@@ -49,15 +48,19 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        var connecttionString = GetConnectonString();
-        optionsBuilder.UseMySql(connecttionString, ServerVersion.AutoDetect(connecttionString));
+        if (!optionsBuilder.IsConfigured)
+        {
+            var connectionString = GetConnectonString();
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+        }
     }
-
     private string GetConnectonString()
     {
+        var dir = Directory.GetCurrentDirectory();
+        var ui = Directory.GetParent(dir).GetDirectories().First(f => f.FullName.Contains("UI")).FullName;
         var configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.Development.json")
+            .SetBasePath(ui)
+            .AddJsonFile($"appsettings.Development.json")
             .Build();
         return configuration.GetConnectionString("DefaultConnection");
     }

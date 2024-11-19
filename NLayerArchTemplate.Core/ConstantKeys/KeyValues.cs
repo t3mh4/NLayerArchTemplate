@@ -1,5 +1,4 @@
-﻿
-namespace NLayerArchTemplate.Core.ConstantKeys;
+﻿namespace NLayerArchTemplate.Core.ConstantKeys;
 
 public sealed class KeyValues
 {
@@ -10,5 +9,4 @@ public sealed class KeyValues
     public const string ClaimTypeUserFullName = "UserFullName";
     public const string ClaimTypeId = "UserId";
     public const string ClaimTypeEmail = "ClaimTypeEmail";
-    public const string XRequestedWith="X-Requested-With";
 }

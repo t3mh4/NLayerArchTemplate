@@ -8,8 +8,6 @@ using NLayerArchTemplate.Dtos.Login;
 using NLayerArchTemplate.Dtos.User;
 using NLayerArchTemplate.Entities;
 using NLayerArchTemplate.DataAccess.Services.UserService;
-using NLayerArchTemplate.Core.Enums;
-using NLayerArchTemplate.Core.Extensions;
 
 namespace NLayerArchTemplate.Business.UserManager;
 

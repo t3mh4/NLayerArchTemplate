@@ -11,7 +11,7 @@ class aufw_http_request {
     #config = {
         headers: {
             "X-HttpRequest-Token": "",
-            "X-Requested-With":"",
+            "X-Requested-With": "",
             "Accept": "application/json",
         }
     };
@@ -72,7 +72,7 @@ class aufw_http_request {
         };
         this.#config.headers["X-Requested-With"] = "GET";
         defOptions.url = '/' + options.controller + "/" + options.action;
-        defOptions.params =  options.params ;
+        defOptions.params = options.params;
         return defOptions;
     }
 
@@ -91,7 +91,7 @@ class aufw_http_request {
         } else {
             console.cError(err);
             let msg = new aufw_message();
-            msg.error({ message: "Beklenmedik bir hata ile karşılaşıldı..!!-3" });
+            msg.error({ message: "Beklenmedik bir hata ile karşılaşıldı..!!" });
             // Anything else
         }
     }
@@ -115,7 +115,7 @@ class aufw_http_request {
     #showValidationErrors(errors) {
         let text = "";
         errors.forEach(function (error, index) {
-            text = text.concat("-&nbsp;&nbsp;" , error.ErrorMessage , "<br/>")
+            text = text.concat("-&nbsp;&nbsp;", error.ErrorMessage, "<br/>")
         });
         let msg = new aufw_message();
         msg.error({ message: text });

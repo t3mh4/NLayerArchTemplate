@@ -1,40 +1,11 @@
-﻿.file-upload-button {
-    margin-right: 10px; /* Buton ile metin alanı arasına boşluk ekler */
-}
-
-.btn-icon {
-    display: flex;
-    align-items: center;
-}
-
-.btn-icon i {
-    margin-right: 5px; /* İkon ile metin arasında boşluk */
-}
-
-.custom-file-input {
-    display: none;
-}
-
-.file-upload-container {
-    display: flex;
-    align-items: center;
-}
-
-.file-upload-button {
-    margin-right: 10px; /* Buton ile metin alanı arasına boşluk ekler */
-    white-space: nowrap; /* Metnin bir satırda kalmasını sağlar */
-}
-
-.thumbnail-container {
+﻿.thumbnail-container {
     display: flex;
     align-items: center;
     border: 1px solid #ccc;
     padding: 16px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    max-width: 600px;
-    margin-bottom: 16px; /* Her bir div arasında boşluk */
-    position: relative; /* Büyüyen resmi modalın üstünde göstermek için */
+    margin-bottom: 10px; /* Her bir div arasında boşluk */
 }
 
 .thumbnail-container p {
@@ -42,12 +13,13 @@
     margin: 0;
     font-size: 16px;
     color: #333;
+    word-break: break-word; /* Uzun kelimelerin alt satıra geçmesini sağlar */
+    overflow-wrap: break-word; /* Metnin taşmasını önler ve alt satıra geçer */
 }
 
 .thumbnail-container button {
     background-color: #007bff;
     color: #fff;
-    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -78,7 +50,7 @@
 .thumbnail-container .remove-btn {
     position: absolute;
     top: 8px;
-    right: 8px;
+    right: 12px;
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 50%;
